@@ -1,0 +1,303 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"install package",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 172.0,
+		"history":
+		[
+			"ls",
+			"dir"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Users/meteo/Dropbox/enchiladas michoacanas",
+		"/C/Users/meteo/Dropbox/dads caesar dressing",
+		"/C/Users/meteo/Dropbox/ableton instructions",
+		"/C/Users/meteo/Dropbox/kates pc",
+		"/C/Users/meteo/Dropbox/tires 2024",
+		"/C/Users/meteo/Dropbox/shrimp with pasta and sauce.txt",
+		"/C/Users/meteo/AppData/Roaming/.minecraft/saves/New World/stats/46c4eb38-3686-449e-b5dc-779ac939c47d.json",
+		"/C/Users/meteo/AppData/Local/Temp/Rar$DIa22068.35567/Flash_log.txt",
+		"/C/Users/meteo/Dropbox/build a secure website",
+		"/C/Users/meteo/Videos/.gallery/f9fe7f56-63df-4b26-9c94-fc4f88569561/Info.txt",
+		"/C/Users/meteo/Videos/CacheClip/f9fe7f56-63df-4b26-9c94-fc4f88569561/Info.txt",
+		"/C/Users/meteo/Dropbox/academia/Coursework Per Semester/Fall 2019/CIS 467/Tutorial/crash_course.py",
+		"/C/Users/meteo/Dropbox/programming/Algorithms/LinkedList.java",
+		"/C/Users/meteo/Dropbox/programming/Algorithms/Node.java",
+		"/C/Users/meteo/Dropbox/programming/Algorithms/coinsCombinations.txt",
+		"/C/Users/meteo/Dropbox/programming/C++ Programs/Knight's Tour Program.txt",
+		"/C/Users/meteo/Dropbox/academia/Coursework Per Semester/Fall 2018/CSE 389/HW3/IrinaServer.java",
+		"/C/Users/meteo/Dropbox/programming/SearchAlgorithms/SearchAlgorithms/dollars.cpp",
+		"/C/Users/meteo/Dropbox/programming/SearchAlgorithms/SearchAlgorithms/BinarySearch.cpp",
+		"/C/Users/meteo/Dropbox/textbooks/Java textbooks.txt",
+		"/C/Users/meteo/Dropbox/network benchmark",
+		"/B/media collection/whisper/sample2/sample2.txt",
+		"/B/media collection/sample1.txt",
+		"/B/media collection/sample1.json",
+		"/C/ffmpeg/README.txt",
+		"/B/Games/PS2 games/Vimm's Lair.txt",
+		"/C/Users/meteo/AppData/Local/Temp/Rar$DIa17464.15948/readme.txt",
+		"/C/Users/meteo/AppData/Local/Temp/Rar$DIa19284.42763/ReadMe.txt",
+		"/D/CarNo_Backup.txt",
+		"/C/Users/meteo/Dropbox/hidden/FINANCE/TAXES/NYIT W2 password.txt",
+		"/B/EmuVR_1.0.12/README.TXT",
+		"/C/Users/meteo/Dropbox/hidden/FINANCE/MONTHLY EXPENSES/BUDGET/TEMPLATE.txt",
+		"/C/Users/meteo/Dropbox/music/Swing.txt",
+		"/C/Users/meteo/Dropbox/music/scales.txt",
+		"/C/Users/meteo/Dropbox/music/major vs minor.txt",
+		"/C/Users/meteo/Dropbox/hidden/FINANCE/MONTHLY EXPENSES/car shopping.txt",
+		"/C/Users/meteo/Dropbox/hidden/FINANCE/MONTHLY EXPENSES/TRACKING.txt",
+		"/C/Users/meteo/Dropbox/hidden/FINANCE/MONTHLY EXPENSES/TEMPLATE.txt",
+		"/C/Users/meteo/Dropbox/hidden/FINANCE/MONTHLY EXPENSES/LEGEND.txt",
+		"/C/Users/meteo/Dropbox/hidden/FINANCE/MONTHLY EXPENSES/CAR TRACKER.txt",
+		"/C/Users/meteo/Dropbox/hidden/FINANCE/MONTHLY EXPENSES/2023 FEBRUARY.txt",
+		"/C/Users/meteo/Dropbox/doctor appt with quotes.txt",
+		"/C/Users/meteo/Dropbox/music/Setlist.txt",
+		"/C/Users/meteo/Dropbox/music/RIFF 1.txt",
+		"/C/Users/meteo/Dropbox/music/Quicksand tab.txt",
+		"/C/Users/meteo/Dropbox/music/My Riff.txt",
+		"/C/Users/meteo/Dropbox/music/the_devil_wears_prada_16431.html",
+		"/C/Users/meteo/Dropbox/music/Playlist.txt",
+		"/B/Games/Steam/steamapps/common/DesktopPlus/readme.txt",
+		"/C/Users/meteo/Dropbox/hidden/colorado - unemployment insurance (phone call).txt",
+		"/C/Users/meteo/Dropbox/hidden/GREEN CARD SPONSOR.txt",
+		"/C/Users/meteo/Dropbox/hidden/HEALTH INSURANCE/Health Advocate case.txt",
+		"/C/Users/meteo/AppData/Local/Temp/Rar$DIa1840.3950/Model.cs",
+		"/C/Users/meteo/AppData/Local/Temp/Rar$DIa1840.5023/MainWindow.xaml.cs",
+		"/C/Users/meteo/AppData/Local/Temp/Rar$DIa1840.5116/App.xaml.cs",
+		"/C/Users/meteo/AppData/Local/Temp/Rar$DIa1840.5283/App.config",
+		"/C/Users/meteo/AppData/Local/Temp/Rar$DIa1840.5393/LED.cs",
+		"/C/Users/meteo/Dropbox/programming/Projects [expired VS2015]/Parsing/Project1/Parsing.cpp",
+		"/C/Users/meteo/Dropbox/programming/Java concepts.txt",
+		"/C/Users/meteo/Dropbox/programming/LeetCode/LeetCode/Program.cs",
+		"/C/Users/meteo/Dropbox/programming/CSE 283/Blackboard/Copy Constructor Overloading Assignment.txt",
+		"/C/Users/meteo/Dropbox/programming/CIS554/CIS554/HW2.cpp",
+		"/C/Users/meteo/Dropbox/programming/CIS 351/Notes/toPost-9-10/act1.txt",
+		"/C/Users/meteo/Dropbox/programming/CIS 351/Notes/others/Nested.java",
+		"/C/Users/meteo/Dropbox/programming/CIS 351/Notes/others/Syracuse.java",
+		"/C/Users/meteo/Dropbox/programming/CIS 351/Labs/Lab1/Lab1.txt",
+		"/C/Users/meteo/AppData/Local/Temp/Rar$DIa2552.29873/DemoApplication.java",
+		"/C/Users/meteo/Documents/EA Games/The Sims 2/Logs/Sims2Exception 2024.02.03 21.46.51.txt",
+		"/C/Users/meteo/Downloads/loadorder.txt",
+		"/B/Games/ModOrganizer/profiles/Default/loadorder.txt",
+		"/C/Users/meteo/Dropbox/offices for mom.txt",
+		"/C/Users/meteo/Dropbox/MONTHLY EXPENSES/2023 FEBRUARY.txt",
+		"/C/Users/meteo/Dropbox/moving arrangements.txt",
+		"/C/Users/meteo/Dropbox/job hunt/INTERVIEW NOTES/questions/TechTalentSouth problem.txt",
+		"/B/Program Files/Unity/Unity Hub/Editor/2022.3.11f1/Editor/Data/Documentation/en/Manual/class-Material.html",
+		"/C/Users/meteo/Dropbox/MONTHLY EXPENSES/2023 APRIL.txt",
+		"/C/Users/meteo/IdeaProjects/untitled/src/untitled.java",
+		"/C/Users/meteo/IdeaProjects/cse389/src/A3/TCPEchoServer.java",
+		"/C/Users/meteo/IdeaProjects/HW2/src/HW2.java",
+		"/B/Program Files/Unity/Unity Hub/UnityLicensingClient_V1/Unity.Licensing.Client.dll.config",
+		"/B/Program Files/Unity/Unity Hub/Editor/2022.3.11f1/Editor/Data/Documentation/en/Manual/CreatingScenes.html",
+		"/B/Program Files/Unity/Unity Hub/UnityLicensingClient_V1/Unity.Licensing.Client.deps.json",
+		"/B/Program Files/Unity/Unity Hub/UnityLicensingClient_V1/Unity.Licensing.Client.runtimeconfig.json",
+		"/B/Program Files/Unity/Unity Hub/Editor/2022.3.11f1/modules.json",
+		"/C/Users/meteo/Dropbox/FIS Global/Job offer + questions.txt",
+		"/C/Users/meteo/Dropbox/job hunt/INTERVIEW PREP/BEHAVIORAL.txt",
+		"/C/Users/meteo/Dropbox/MONTHLY EXPENSES/LEGEND.txt",
+		"/C/Users/meteo/Dropbox/IGNW/able ignw.txt",
+		"/C/DEVELOPMENT/angular/proj/proj/src/app/app.component.html",
+		"/C/DEVELOPMENT/angular/proj/proj/.gitignore",
+		"/C/DEVELOPMENT/angular/proj/proj/package.json",
+		"/C/Users/meteo/Dropbox/MONTHLY EXPENSES/2023 JULY.txt",
+		"/C/Users/meteo/Dropbox/MONTHLY EXPENSES/2023 AUGUST.txt",
+		"/B/Games/Super Mario Eclipse/README.txt",
+		"/C/Users/meteo/Dropbox/job hunt/INTERVIEW PREP/BACKEND.txt",
+		"/C/Users/meteo/Dropbox/MONTHLY EXPENSES/CAR TRACKER.txt",
+		"/C/Users/meteo/Dropbox/MONTHLY EXPENSES/TEMPLATE.txt",
+		"/C/Users/meteo/Dropbox/MONTHLY EXPENSES/2023 - JULY.txt",
+		"/C/Users/meteo/Dropbox/MONTHLY EXPENSES/TRACKING.txt",
+		"/C/Users/meteo/Dropbox/MONTHLY EXPENSES/2023 JUNE.txt",
+		"/C/Users/meteo/Dropbox/MONTHLY EXPENSES/TRACKING",
+		"/C/Users/meteo/Dropbox/MONTHLY EXPENSES/2023 MAY.txt",
+		"/C/Users/meteo/Downloads/the_devil_wears_prada_16431.html",
+		"/C/Users/meteo/Downloads/1.html",
+		"/C/Users/meteo/Downloads/Program.cs",
+		"/C/Users/meteo/Dropbox/job hunt/LHH tips & resources.txt",
+		"/C/Users/meteo/Dropbox/auto insurance.txt",
+		"/C/Users/meteo/Dropbox/MONTHLY EXPENSES/2023 MARCH.txt",
+		"/C/Users/meteo/Dropbox/job hunt/INTERVIEW NOTES/Brooksource call.txt",
+		"/C/DEVELOPMENT/WebApp/PlotTwist/.gitignore",
+		"/C/Users/meteo/AppData/Local/Temp/Rar$DIa19180.29085/Instructions.txt",
+		"/C/Users/meteo/source/repos/Practice/LeetCodePractice/Program.cs",
+		"/C/Users/meteo/Dropbox/job hunt/INTERVIEW NOTES/nasdaq phone call.txt",
+		"/C/Users/meteo/Dropbox/job hunt/INTERVIEW NOTES/PIN Business Network phone screen.txt",
+		"/C/Users/meteo/Dropbox/job hunt/INTERVIEW NOTES/Air Methods call.txt",
+		"/B/Games/CurseForge Mod Folder/Instances/All the Mods 8 - ATM8/logs/latest.log",
+		"/C/Users/meteo/Dropbox/job hunt/INTERVIEW NOTES/Akkodis call.txt",
+		"/C/Users/meteo/Dropbox/programming/OpenAI/API key [OpenAI].txt",
+		"/C/Users/meteo/AppData/Roaming/ChatGPT/settings.json",
+		"/C/Users/meteo/Dropbox/job hunt/INTERVIEW NOTES/Virga Labs call.txt",
+		"/C/Users/meteo/Dropbox/job hunt/INTERVIEW NOTES/Innova Solutions call.txt",
+		"/C/Users/meteo/Dropbox/job hunt/INTERVIEW NOTES/State of CO phone call.txt",
+		"/C/Users/meteo/Dropbox/job hunt/INTERVIEW NOTES/SEP phone call.txt",
+		"/C/Users/meteo/Dropbox/job hunt/INTERVIEW NOTES/Developrec interview.txt",
+		"/C/Users/meteo/Dropbox/job hunt/INTERVIEW NOTES/Radancy phone call.txt",
+		"/C/Users/meteo/Dropbox/job hunt/INTERVIEW NOTES/Pure Insurance interview.txt",
+		"/C/Users/meteo/Dropbox/MONTHLY EXPENSES/2023 JANUARY.txt",
+		"/C/Users/meteo/Dropbox/job hunt/INTERVIEW NOTES/State of CO phone call"
+	],
+	"find":
+	{
+		"height": 36.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 36.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"pinned_build_system": "",
+	"project": "App.sublime-project",
+	"replace":
+	{
+		"height": 68.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
