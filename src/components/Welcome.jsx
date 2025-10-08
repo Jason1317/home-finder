@@ -33,13 +33,6 @@ const Welcome = ({ onStart }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="min-h-screen flex items-center justify-center p-4"
-      style={{
-        backgroundImage: `url(${houseGif})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        minHeight: '100vh',
-        filter: "brightness(1) blur(2px)"
-      }}
     >
       <div className="max-w-6xl mx-auto">
         {/* Hero Section */}
