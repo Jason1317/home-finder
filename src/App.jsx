@@ -32,28 +32,59 @@ function App() {
     };
 
     try {
-      // For now, let's use a hardcoded search for demonstration
-      const response = await fetch('https://zillow-com1.p.rapidapi.com/propertyExtendedSearch?location=austin%2C%20tx', options);
+      // Build query from preferences
+      const locationRaw = (preferences.location || 'Austin, TX').trim()
+      const location = encodeURIComponent(locationRaw)
+
+      // Map budget to price range
+      let priceMin
+      let priceMax
+      switch (preferences.budget) {
+        case 'under-200k':
+          priceMax = 200000; break;
+        case '200k-400k':
+          priceMin = 200000; priceMax = 400000; break;
+        case '400k-600k':
+          priceMin = 400000; priceMax = 600000; break;
+        case '600k-1m':
+          priceMin = 600000; priceMax = 1000000; break;
+        case 'over-1m':
+          priceMin = 1000000; break;
+        default:
+          // leave undefined to let API decide
+          break;
+      }
+
+      const params = new URLSearchParams({ location })
+      if (priceMin !== undefined) params.append('price_min', String(priceMin))
+      if (priceMax !== undefined) params.append('price_max', String(priceMax))
+
+      const url = `https://zillow-com1.p.rapidapi.com/propertyExtendedSearch?${params.toString()}`
+      const response = await fetch(url, options);
       const data = await response.json();
       console.log('API Response:', data);
 
       // --- Data Transformation ---
       // The API response needs to be mapped to the structure `Results.jsx` expects.
       // This is a placeholder and will need to be adjusted based on the actual API response.
-      const formattedRecommendations = data.props.map(prop => ({
-        id: prop.zpid,
-        city: prop.city,
-        state: prop.state,
-        matchScore: Math.floor(Math.random() * (95 - 85 + 1)) + 85, // Fake score
-        medianPrice: prop.price,
-        image: prop.imgSrc,
-        neighborhood: prop.address,
+      const propsArray = Array.isArray(data?.props) ? data.props : []
+      const formattedRecommendations = propsArray.map(prop => ({
+        id: prop?.zpid ?? `${prop?.lat || 'x'}-${prop?.lotAreaValue || Math.random()}`,
+        city: prop?.city || 'Unknown',
+        state: prop?.state || '',
+        matchScore: Math.floor(Math.random() * (95 - 85 + 1)) + 85,
+        medianPrice: Number(prop?.price) || 0,
+        image: prop?.imgSrc || 'https://via.placeholder.com/800x500?text=No+Image',
+        neighborhood: prop?.address || [prop?.city, prop?.state].filter(Boolean).join(', '),
         pros: ["Live Data!", "Great Location", "Good Value"],
         cons: ["Needs more data", "High demand"],
         highlights: [
-            { icon: <GraduationCap />, label: "Schools", value: "N/A", good: true },
-            { icon: <Shield />, label: "Safety", value: "N/A", good: true },
-        ]
+          { icon: <GraduationCap />, label: "Schools", value: "N/A", good: true },
+          { icon: <Shield />, label: "Safety", value: "N/A", good: true },
+        ],
+        // Optional fields used by UI with guards
+        priceChange: prop?.priceChangeText || undefined,
+        stats: { schoolRating: 'N/A', crimeRate: 'N/A', walkScore: 'N/A', commuteTime: 'N/A' }
       }));
       
       setRecommendations(formattedRecommendations);
