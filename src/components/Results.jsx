@@ -1,18 +1,27 @@
+// Results Component - Displays the recommended neighborhoods/cities based on user preferences
+// Shows a list of recommendations and detailed view when a city is selected
+
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { MapPin, DollarSign, Star, Users, GraduationCap, Shield, Car, Coffee, Home, ChevronRight, ExternalLink, RefreshCw, Heart, TrendingUp, TrendingDown } from 'lucide-react'
 
+// Props: preferences (user's answers), recommendations (array of matching cities), onRestart (callback to restart)
 const Results = ({ preferences, recommendations, onRestart }) => {
+  // State to track which city is currently selected for detailed view
+  // null means no city is selected, otherwise stores the city object
   const [selectedCity, setSelectedCity] = useState(null)
 
+  // CityCard is a sub-component (component defined inside another component)
+  // It displays a summary card for each recommended city
+  // Props: city (data object), isSelected (boolean), onClick (callback when clicked)
   const CityCard = ({ city, isSelected, onClick }) => (
     <motion.div
-      layoutId={`city-${city.id}`}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5 }}
-      onClick={onClick}
-      className={`cursor-pointer card overflow-hidden ${isSelected ? 'ring-2 ring-blue-500' : ''}`}
+      layoutId={`city-${city.id}`} // Used for smooth transitions when card opens in detail view
+      initial={{ opacity: 0, y: 20 }} // Starts below and invisible
+      animate={{ opacity: 1, y: 0 }}  // Fades in and moves up
+      whileHover={{ y: -5 }}          // Lifts up slightly on hover
+      onClick={onClick}                // Callback function when card is clicked
+      className={`cursor-pointer card overflow-hidden ${isSelected ? 'ring-2 ring-blue-500' : ''}`} // Blue ring when selected
     >
       <div className="relative">
         <img 
@@ -20,9 +29,10 @@ const Results = ({ preferences, recommendations, onRestart }) => {
           alt={`${city.city} neighborhood`}
           className="w-full h-48 object-cover"
         />
+        {/* Match score badge - shows how well this city matches user preferences */}
         <div className="absolute top-4 right-4 bg-white rounded-full px-3 py-1 shadow-lg">
           <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 text-yellow-500 fill-current" />
+            <Star className="w-4 h-4 text-yellow-500 fill-current" /> {/* Filled star icon */}
             <span className="font-semibold text-sm">{city.matchScore}% Match</span>
           </div>
         </div>
@@ -50,7 +60,9 @@ const Results = ({ preferences, recommendations, onRestart }) => {
           </div>
         </div>
 
+        {/* Highlights grid - shows key features like schools, safety, etc. */}
         <div className="grid grid-cols-2 gap-3 mb-4">
+          {/* Map through highlights array to display each feature */}
           {city.highlights.map((highlight, index) => (
             <div key={index} className="flex items-center gap-2">
               <div className={`p-1 rounded ${highlight.good ? 'text-green-600' : 'text-orange-600'}`}>
@@ -71,11 +83,13 @@ const Results = ({ preferences, recommendations, onRestart }) => {
     </motion.div>
   )
 
+  // DetailedView is another sub-component that shows full details when a city is selected
+  // It appears in the sidebar on desktop or as a modal on mobile
   const DetailedView = ({ city }) => (
     <motion.div
-      initial={{ opacity: 0, x: 300 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 300 }}
+      initial={{ opacity: 0, x: 300 }} // Starts from the right side, invisible
+      animate={{ opacity: 1, x: 0 }}   // Slides in to center, becomes visible
+      exit={{ opacity: 0, x: 300 }}    // Slides out to the right when closing
       className="bg-white rounded-xl shadow-xl overflow-hidden"
     >
       <div className="relative h-64">
@@ -89,8 +103,9 @@ const Results = ({ preferences, recommendations, onRestart }) => {
           <h2 className="text-2xl font-bold">{city.city}</h2>
           <p className="text-lg opacity-90">{city.neighborhood} • {city.state}</p>
         </div>
+        {/* Close button - sets selectedCity to null to close the detailed view */}
         <button
-          onClick={() => setSelectedCity(null)}
+          onClick={() => setSelectedCity(null)} // Reset selection to close detail view
           className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/30 transition-colors"
         >
           ×
@@ -113,10 +128,12 @@ const Results = ({ preferences, recommendations, onRestart }) => {
           </button>
         </div>
 
+        {/* Pros and Cons section - shows advantages and considerations */}
         <div className="grid grid-cols-2 gap-6 mb-8">
           <div>
             <h3 className="font-semibold text-lg mb-3 text-green-700">Why You'll Love It</h3>
             <ul className="space-y-2">
+              {/* Map through pros array to list each advantage */}
               {city.pros.map((pro, index) => (
                 <li key={index} className="flex items-start gap-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
@@ -129,6 +146,7 @@ const Results = ({ preferences, recommendations, onRestart }) => {
           <div>
             <h3 className="font-semibold text-lg mb-3 text-orange-700">Consider These Points</h3>
             <ul className="space-y-2">
+              {/* Map through cons array to list each consideration */}
               {city.cons.map((con, index) => (
                 <li key={index} className="flex items-start gap-2">
                   <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0" />
@@ -139,8 +157,10 @@ const Results = ({ preferences, recommendations, onRestart }) => {
           </div>
         </div>
 
+        {/* Quick Stats section - displays numerical data about the city */}
         <div className="bg-gray-50 rounded-lg p-4">
           <h3 className="font-semibold mb-3">Quick Stats</h3>
+          {/* Grid with 4 columns showing different statistics */}
           <div className="grid grid-cols-4 gap-4 text-center">
             <div>
               <div className="text-2xl font-bold text-blue-600">{city.stats.schoolRating}</div>
@@ -193,31 +213,36 @@ const Results = ({ preferences, recommendations, onRestart }) => {
           </button>
         </motion.div>
 
+        {/* Main layout: 2/3 width for results list, 1/3 for detailed view */}
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Results List */}
+          {/* Results List - displays all recommended cities */}
           <div className="lg:col-span-2">
             <motion.div
-              initial={{ x: -50, opacity: 0 }}
+              initial={{ x: -50, opacity: 0 }} // Slides in from left
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
               className="space-y-6"
             >
+              {/* Conditional rendering: show cities if available, otherwise show "no results" message */}
               {recommendations && recommendations.length > 0 ? (
+                // Map through recommendations array to create a CityCard for each city
+                // Each city card animates in with a staggered delay based on its position
                 recommendations.map((city, index) => (
                   <motion.div
-                    key={city.id}
+                    key={city.id} // React requires unique key for list items
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
+                    transition={{ delay: index * 0.1 }} // Each card appears 0.1s after the previous
                   >
                     <CityCard 
                       city={city} 
-                      isSelected={selectedCity?.id === city.id}
-                      onClick={() => setSelectedCity(city)}
+                      isSelected={selectedCity?.id === city.id} // Check if this city is the selected one
+                      onClick={() => setSelectedCity(city)} // Set this city as selected when clicked
                     />
                   </motion.div>
                 ))
               ) : (
+                // Show this message if there are no recommendations
                 <div className="bg-white rounded-xl shadow-lg p-8 text-center">
                   <h3 className="text-xl font-semibold text-gray-800 mb-2">No Results Found</h3>
                   <p className="text-gray-600">
@@ -249,9 +274,11 @@ const Results = ({ preferences, recommendations, onRestart }) => {
             </motion.div>
           </div>
 
-          {/* Detailed View Sidebar */}
+          {/* Detailed View Sidebar - shows full details of selected city */}
           <div className="lg:col-span-1">
+            {/* sticky keeps the sidebar visible when scrolling */}
             <div className="sticky top-8">
+              {/* Conditional rendering: show detailed view if city is selected, otherwise show placeholder */}
               {selectedCity ? (
                 <DetailedView city={selectedCity} />
               ) : (
@@ -276,16 +303,17 @@ const Results = ({ preferences, recommendations, onRestart }) => {
           </div>
         </div>
 
-        {/* Your Preferences Summary */}
+        {/* Your Preferences Summary - shows a summary of what the user selected */}
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 1 }}
+          transition={{ delay: 1 }} // Last element to appear
           className="mt-16 bg-white rounded-xl shadow-lg p-8"
         >
           <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">
             Based on Your Preferences
           </h3>
+          {/* Grid showing user's budget, priorities, deal breakers, and experience */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="text-center">
               <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
