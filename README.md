@@ -1,6 +1,13 @@
 # Home Finder App - Interactive Prototype
 
 A modern, interactive web application that helps first-time and prospective home buyers discover their perfect neighborhood based on their unique needs and preferences.
+<br><br>
+<img width="600" height="854" alt="image" src="https://github.com/user-attachments/assets/231853d1-e48a-4b42-aeac-134e66cea853" />
+<br>
+<img width="600" height="854" alt="image" src="https://github.com/user-attachments/assets/f54f9821-194f-46ba-aad0-67571ad3802c" />
+<br>
+<img width="600" height="854" alt="image" src="https://github.com/user-attachments/assets/940640cd-4cbf-4a43-8d88-4b9e9c9f79bf" />
+
 
 ## 🏠 Features
 
