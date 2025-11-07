@@ -3,14 +3,8 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# config
-eslint.config.js
-package-lock.json
-package.json
-postcss.config.js
-tailwind.config.js
-vite.config.js
+pnpm-debug.log*
+lerna-debug.log*
 
 # Build outputs
 dist/
