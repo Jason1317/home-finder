@@ -307,52 +307,57 @@ const Results = ({ preferences, recommendations, onRestart }) => {
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 1 }} // Last element to appear
-          className="mt-16 bg-white rounded-xl shadow-lg p-8"
+          transition={{ delay: 1 }}
+          className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl border-t-2 border-gray-200 p-6 z-50"
         >
-          <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-            Based on Your Preferences
-          </h3>
-          {/* Grid showing user's budget, priorities, deal breakers, and experience */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <DollarSign className="w-6 h-6 text-green-600" />
+          <div className="max-w-7xl mx-auto">
+            <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">
+              Based on Your Preferences
+            </h3>
+            {/* Grid showing user's budget, priorities, deal breakers, and experience */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="text-center">
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <DollarSign className="w-5 h-5 text-green-600" />
+                </div>
+                <h4 className="font-semibold text-gray-800 text-sm">Budget Range</h4>
+                <p className="text-gray-600 text-xs mt-1">
+                  {preferences.budget?.replace('-', ' - $').replace('k', 'K').replace('m', 'M') || 'Not specified'}
+                </p>
               </div>
-              <h4 className="font-semibold text-gray-800">Budget Range</h4>
-              <p className="text-gray-600 text-sm mt-1">
-                {preferences.budget?.replace('-', ' - $').replace('k', 'K').replace('m', 'M') || 'Not specified'}
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Heart className="w-6 h-6 text-blue-600" />
+              <div className="text-center">
+                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <Heart className="w-5 h-5 text-blue-600" />
+                </div>
+                <h4 className="font-semibold text-gray-800 text-sm">Top Priorities</h4>
+                <p className="text-gray-600 text-xs mt-1">
+                  {preferences.lifestyle?.length || 0} selected
+                </p>
               </div>
-              <h4 className="font-semibold text-gray-800">Top Priorities</h4>
-              <p className="text-gray-600 text-sm mt-1">
-                {preferences.lifestyle?.length || 0} selected
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Shield className="w-6 h-6 text-red-600" />
+              <div className="text-center">
+                <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <Shield className="w-5 h-5 text-red-600" />
+                </div>
+                <h4 className="font-semibold text-gray-800 text-sm">Deal Breakers</h4>
+                <p className="text-gray-600 text-xs mt-1">
+                  {preferences.dealbreakers?.length || 0} selected
+                </p>
               </div>
-              <h4 className="font-semibold text-gray-800">Deal Breakers</h4>
-              <p className="text-gray-600 text-sm mt-1">
-                {preferences.dealbreakers?.length || 0} selected
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Users className="w-6 h-6 text-purple-600" />
+              <div className="text-center">
+                <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <Users className="w-5 h-5 text-purple-600" />
+                </div>
+                <h4 className="font-semibold text-gray-800 text-sm">Experience</h4>
+                <p className="text-gray-600 text-xs mt-1">
+                  {preferences.experience?.replace('-', ' ') || 'Not specified'}
+                </p>
               </div>
-              <h4 className="font-semibold text-gray-800">Experience</h4>
-              <p className="text-gray-600 text-sm mt-1">
-                {preferences.experience?.replace('-', ' ') || 'Not specified'}
-              </p>
             </div>
           </div>
         </motion.div>
+
+        {/* Spacer to prevent content from being hidden behind fixed preferences bar */}
+        <div className="h-48"></div>
       </div>
     </motion.div>
   )
