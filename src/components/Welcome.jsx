@@ -1,22 +1,12 @@
-// Welcome Component - The landing page users see when they first visit the app
-// This component displays an attractive welcome screen with features and a call-to-action button
-
 import React from 'react'
-// framer-motion provides smooth animations for React components
 import { motion } from 'framer-motion'
-// lucide-react provides icon components (like Home, MapPin, etc.)
 import { Home, MapPin, Heart, Star, ChevronRight, Search, Users, Building } from 'lucide-react'
 import houseGif from '../assets/house.gif';
 
-// This is a React functional component that receives props
-// Props are data passed from parent components (in this case, an 'onStart' callback function)
 const Welcome = ({ onStart }) => {
-  // This is an array that stores feature information
-  // Each feature object contains an icon (JSX element), title, and description
-  // We'll map through this array later to display all features
   const features = [
     {
-      icon: <Search className="w-8 h-8 text-blue-600" />, // JSX element that renders as an icon
+      icon: <Search className="w-8 h-8 text-blue-600" />,
       title: "Smart Discovery",
       description: "AI-powered recommendations based on your unique needs"
     },
@@ -37,21 +27,18 @@ const Welcome = ({ onStart }) => {
     }
   ]
 
-  // The return statement contains the JSX (JavaScript XML) that defines what the component renders
-  // motion.div is an animated div from framer-motion that can fade in/out
   return (
     <motion.div
-      initial={{ opacity: 0 }} // Starting state: invisible (opacity 0)
-      animate={{ opacity: 1 }}  // Ending state: fully visible (opacity 1)
-      exit={{ opacity: 0 }}     // State when component is removed: fade out
-      className="min-h-screen flex items-center justify-center p-4" // Tailwind CSS classes for styling
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="min-h-screen flex items-center justify-center p-4"
     >
       <div className="max-w-6xl mx-auto">
-        {/* Hero Section - The main heading and call-to-action area */}
         <motion.div
-          initial={{ y: 50, opacity: 0 }} // Starts 50px down and invisible
-          animate={{ y: 0, opacity: 1 }}   // Animates to normal position and visible
-          transition={{ duration: 0.6 }}   // Animation takes 0.6 seconds
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
           <motion.div
@@ -72,11 +59,10 @@ const Welcome = ({ onStart }) => {
             An intelligent home finder that understands your unique needs, budget, and lifestyle to discover neighborhoods you'll love across the United States.
           </p>
           
-          {/* The main "Start Your Journey" button */}
           <motion.button
-            whileHover={{ scale: 1.05 }} // Scales up 5% when mouse hovers
-            whileTap={{ scale: 0.95 }}   // Scales down 5% when clicked
-            onClick={onStart}             // Calls the onStart function when clicked (passed from parent)
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onStart}
             className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-lg font-semibold px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300"
           >
             Start Your Journey
@@ -84,21 +70,18 @@ const Welcome = ({ onStart }) => {
           </motion.button>
         </motion.div>
 
-        {/* Features Grid - Displays the 4 feature cards */}
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.4 }} // Waits 0.4s before starting animation
-          className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16" // Responsive grid: 1 col on mobile, 2 on tablet, 4 on desktop
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
         >
-          {/* map() iterates through the features array and creates a card for each one */}
-          {/* Each feature card is animated individually */}
           {features.map((feature, index) => (
             <motion.div
-              key={feature.title} // React needs a unique key for each item in a list
-              initial={{ y: 20, opacity: 0 }}          // Starts slightly below and invisible
-              animate={{ y: 0, opacity: 1 }}           // Moves to normal position and becomes visible
-              transition={{ duration: 0.5, delay: 0.1 * index }} // Each card animates with a slight delay based on its position
+              key={feature.title}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 * index }}
               className="card p-6 text-center hover:bg-gradient-to-br hover:from-white hover:to-blue-50"
             >
               <div className="mb-4 flex justify-center">
@@ -114,12 +97,11 @@ const Welcome = ({ onStart }) => {
           ))}
         </motion.div>
 
-        {/* Stats Section - Displays impressive statistics about the service */}
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.6 }} // Last section to animate
-          className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl" // Semi-transparent white background with blur effect
+          transition={{ duration: 0.6, delay: 0.6 }}
+          className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl"
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
