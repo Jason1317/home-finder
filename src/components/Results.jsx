@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { MapPin, DollarSign, Star, Home, RefreshCw, Heart, TrendingUp, TrendingDown, Bed, Bath, Maximize, ChevronDown, ChevronUp, ExternalLink, AlertCircle, Sparkles } from 'lucide-react'
 
 const Results = ({ preferences, recommendations, onRestart }) => {
+  // Helper to get consistent unique ID for properties
+  const getUniqueId = (prop) => prop.zpid || prop.id || `${prop.city}-${prop.neighborhood}`
+
   // Deduplicate and limit results to 3 unique properties
   const preparedResults = useMemo(() => {
     if (!recommendations || recommendations.length === 0) return []
@@ -10,9 +13,10 @@ const Results = ({ preferences, recommendations, onRestart }) => {
     // Use Map to deduplicate by unique ID
     const uniqueMap = new Map()
     recommendations.forEach(prop => {
-      const uniqueId = prop.id || prop.zpid || `${prop.city}-${prop.neighborhood}`
+      const uniqueId = getUniqueId(prop)
       if (!uniqueMap.has(uniqueId)) {
-        uniqueMap.set(uniqueId, prop)
+        // Add uniqueId to property for consistent access
+        uniqueMap.set(uniqueId, { ...prop, uniqueId })
       }
     })
     
@@ -29,6 +33,21 @@ const Results = ({ preferences, recommendations, onRestart }) => {
   }, [recommendations])
 
   const [expandedProperty, setExpandedProperty] = useState(null)
+
+  // Format budget string for display
+  const formatBudget = (budget) => {
+    if (!budget) return 'Any Budget'
+    
+    const budgetMap = {
+      'under-200k': 'Under $200K',
+      '200k-400k': '$200K - $400K',
+      '400k-600k': '$400K - $600K',
+      '600k-1m': '$600K - $1M',
+      'over-1m': 'Over $1M'
+    }
+    
+    return budgetMap[budget] || budget
+  }
 
   // PropertyHero - Hero image section with match score badge
   // Modular component that displays property image and key badges
@@ -77,7 +96,23 @@ const Results = ({ preferences, recommendations, onRestart }) => {
   const PropertyEssentials = ({ property }) => {
     const beds = property.rawData?.bedrooms || property.rawData?.beds || 'N/A'
     const baths = property.rawData?.bathrooms || property.rawData?.baths || 'N/A'
-    const sqft = property.rawData?.livingArea || property.rawData?.sqft || 'N/A'
+    const sqft = property.rawData?.livingArea || property.rawData?.sqft || null
+    
+    // Safe formatting for price
+    const formatPrice = (price) => {
+      if (typeof price === 'number' && !isNaN(price)) {
+        return `$${price.toLocaleString()}`
+      }
+      return 'Contact for price'
+    }
+
+    // Safe formatting for sqft
+    const formatSqft = (value) => {
+      if (typeof value === 'number' && !isNaN(value)) {
+        return value.toLocaleString()
+      }
+      return 'N/A'
+    }
     
     return (
       <div className="p-6 border-b border-gray-100">
@@ -85,7 +120,7 @@ const Results = ({ preferences, recommendations, onRestart }) => {
         <div className="mb-6">
           <div className="flex items-baseline gap-2">
             <span className="text-4xl font-bold text-gray-900">
-              ${property.medianPrice?.toLocaleString() || 'Contact for price'}
+              {formatPrice(property.medianPrice)}
             </span>
           </div>
         </div>
@@ -117,7 +152,7 @@ const Results = ({ preferences, recommendations, onRestart }) => {
               <Maximize className="w-5 h-5 text-green-600" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-gray-900">{sqft !== 'N/A' ? sqft.toLocaleString() : 'N/A'}</div>
+              <div className="text-2xl font-bold text-gray-900">{formatSqft(sqft)}</div>
               <div className="text-xs text-gray-600">Sq Ft</div>
             </div>
           </div>
@@ -217,8 +252,8 @@ const Results = ({ preferences, recommendations, onRestart }) => {
       <PropertyEssentials property={property} />
       <PropertyInsights 
         property={property}
-        isExpanded={expandedProperty === property.id}
-        onToggle={() => setExpandedProperty(expandedProperty === property.id ? null : property.id)}
+        isExpanded={expandedProperty === property.uniqueId}
+        onToggle={() => setExpandedProperty(expandedProperty === property.uniqueId ? null : property.uniqueId)}
       />
     </motion.div>
   )
@@ -256,7 +291,7 @@ const Results = ({ preferences, recommendations, onRestart }) => {
         {preparedResults.length > 0 ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-12">
             {preparedResults.map((property, index) => (
-              <PropertyCard key={property.id} property={property} index={index} />
+              <PropertyCard key={property.uniqueId} property={property} index={index} />
             ))}
           </div>
         ) : (
@@ -345,7 +380,7 @@ const Results = ({ preferences, recommendations, onRestart }) => {
             <div className="flex items-center gap-2">
               <DollarSign className="w-5 h-5 text-green-600" />
               <span className="text-gray-700">
-                {preferences.budget?.replace('-', ' - $').replace('k', 'K').replace('m', 'M') || 'Any Budget'}
+                {formatBudget(preferences.budget)}
               </span>
             </div>
             <div className="flex items-center gap-2">
