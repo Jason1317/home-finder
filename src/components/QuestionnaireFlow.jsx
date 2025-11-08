@@ -1,28 +1,18 @@
-// QuestionnaireFlow Component - A multi-step form that collects user preferences
-// This component displays questions one at a time and stores user answers
-
-import React, { useState } from 'react' // useState is a React Hook that lets us manage component state
-import { motion, AnimatePresence } from 'framer-motion' // AnimatePresence handles exit animations
+import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight, ChevronLeft, DollarSign, MapPin, Users, Car, Coffee, GraduationCap, Shield, Moon, Heart, Home, Briefcase, Loader } from 'lucide-react'
 
-// Props: onComplete (callback function), isLoading (boolean showing if data is being fetched)
 const QuestionnaireFlow = ({ onComplete, isLoading }) => {
-  // useState Hook: currentQuestion stores which question we're on (0 = first question)
-  // setCurrentQuestion is the function to update it
   const [currentQuestion, setCurrentQuestion] = useState(0)
-  // useState Hook: answers stores all user responses in an object
-  // Example: { budget: '200k-400k', lifestyle: ['schools', 'safety'] }
   const [answers, setAnswers] = useState({})
 
-  // This array contains all the questions in the questionnaire
-  // Each question object has: id (unique identifier), title, subtitle, type, and options
   const questions = [
     {
-      id: 'experience', // Used as a key to store the answer in the answers object
+      id: 'experience',
       title: "What's your home buying experience?",
       subtitle: "This helps us tailor our recommendations",
-      type: 'single', // 'single' means user can only select one option
-      options: [ // Array of available choices for this question
+      type: 'single',
+      options: [
         { value: 'first-time', label: 'First-time buyer', icon: <Home className="w-6 h-6" />, description: 'New to the home buying process' },
         { value: 'experienced', label: 'Experienced buyer', icon: <Briefcase className="w-6 h-6" />, description: 'Bought homes before' },
         { value: 'investor', label: 'Investor', icon: <DollarSign className="w-6 h-6" />, description: 'Looking for investment properties' }
@@ -45,8 +35,8 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
       id: 'lifestyle',
       title: "What's most important to you?",
       subtitle: "Select your top 3 priorities",
-      type: 'multiple', // 'multiple' means user can select several options
-      maxSelections: 3, // Limits how many options can be selected
+      type: 'multiple',
+      maxSelections: 3,
       options: [
         { value: 'schools', label: 'Great Schools', icon: <GraduationCap className="w-6 h-6" />, description: 'Top-rated education' },
         { value: 'safety', label: 'Safety & Security', icon: <Shield className="w-6 h-6" />, description: 'Low crime rates' },
@@ -75,89 +65,64 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
       id: 'location',
       title: "Any location preferences?",
       subtitle: "Regions, states, or areas you're interested in or want to avoid",
-      type: 'text', // 'text' means user types their answer in a textarea
+      type: 'text',
       placeholder: 'e.g., Prefer West Coast, avoid harsh winters, close to Austin...'
     }
   ]
 
-  // Get the current question object based on the currentQuestion index
   const currentQ = questions[currentQuestion]
-  // Check if we're on the last question (used to change button text)
   const isLastQuestion = currentQuestion === questions.length - 1
 
-  // This function is called when user selects an option or types text
-  // questionId: which question is being answered (e.g., 'budget', 'lifestyle')
-  // value: the answer value (e.g., '200k-400k' or 'schools')
   const handleAnswerChange = (questionId, value) => {
     console.log('Answer changed:', questionId, value);
-    // Find the question object to check its type
     const question = questions.find(q => q.id === questionId)
     
-    // Handle multiple-choice questions (user can select multiple options)
     if (question.type === 'multiple') {
-      // Get current answers for this question, or empty array if none exist
       const currentAnswers = answers[questionId] || []
-      const maxSelections = question.maxSelections || Infinity // Default to unlimited if not specified
+      const maxSelections = question.maxSelections || Infinity
       
-      // If option is already selected, remove it (toggle off)
       if (currentAnswers.includes(value)) {
-        // setAnswers updates state using the previous state (prev)
-        // The spread operator (...) copies all existing answers, then we update this question
         setAnswers(prev => ({
-          ...prev, // Keep all other questions' answers unchanged
-          [questionId]: currentAnswers.filter(v => v !== value) // Remove the selected value
+          ...prev,
+          [questionId]: currentAnswers.filter(v => v !== value)
         }))
-      } 
-      // If option is not selected and we haven't reached max, add it (toggle on)
-      else if (currentAnswers.length < maxSelections) {
+      } else if (currentAnswers.length < maxSelections) {
         setAnswers(prev => ({
-          ...prev, // Keep all other questions' answers unchanged
-          [questionId]: [...currentAnswers, value] // Add the new value to the array
+          ...prev,
+          [questionId]: [...currentAnswers, value]
         }))
       }
-    } 
-    // Handle single-choice and text questions
-    else {
+    } else {
       setAnswers(prev => ({
-        ...prev, // Keep all other questions' answers unchanged
-        [questionId]: value // Replace the answer for this question with the new value
+        ...prev,
+        [questionId]: value
       }))
     }
   }
 
-  // Called when user clicks "Continue" or "Find My Perfect Home" button
   const handleNext = () => {
     if (isLastQuestion) {
-      // If on last question, call onComplete with all answers (triggers results page)
       onComplete(answers)
     } else {
-      // Otherwise, move to the next question (increment currentQuestion by 1)
       setCurrentQuestion(prev => prev + 1)
     }
   }
 
-  // Called when user clicks "Back" button
   const handleBack = () => {
-    // Go to previous question, but don't go below 0 (stay on first question)
     setCurrentQuestion(prev => Math.max(0, prev - 1))
   }
 
-  // Checks if the user has answered the current question (enables/disables Continue button)
   const canProceed = () => {
-    const answer = answers[currentQ.id] // Get the answer for current question
+    const answer = answers[currentQ.id]
     
     if (currentQ.type === 'multiple') {
-      // For multiple choice: must have at least one selection
       return answer && answer.length > 0
     } else if (currentQ.type === 'text') {
-      // For text: must have non-empty text (trim() removes whitespace)
       return answer && answer.trim().length > 0
     }
-    // For single choice: answer just needs to exist (not undefined)
     return answer !== undefined
   }
 
-  // If data is loading, show a loading spinner instead of the questionnaire
   if (isLoading) {
     return (
       <motion.div
@@ -188,35 +153,28 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
       className="min-h-screen flex items-center justify-center p-4"
     >
       <div className="max-w-4xl w-full">
-        {/* Progress Bar - Shows how far through the questionnaire user is */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
-            {/* Display current question number (currentQuestion is 0-based, so add 1) */}
             <span className="text-sm text-gray-600">Question {currentQuestion + 1} of {questions.length}</span>
-            {/* Calculate and display percentage complete */}
             <span className="text-sm text-gray-600">{Math.round(((currentQuestion + 1) / questions.length) * 100)}%</span>
           </div>
-          {/* Gray background bar */}
           <div className="w-full bg-gray-200 rounded-full h-2">
-            {/* Animated filled portion that grows as user progresses */}
             <motion.div
-              initial={{ width: 0 }} // Starts at 0 width
-              animate={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }} // Grows based on progress
-              transition={{ duration: 0.5 }} // Smooth animation
+              initial={{ width: 0 }}
+              animate={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
+              transition={{ duration: 0.5 }}
               className="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full"
             />
           </div>
         </div>
 
-        {/* AnimatePresence handles smooth transitions between questions */}
         <AnimatePresence mode="wait">
-          {/* The key prop changes when currentQuestion changes, triggering the animation */}
           <motion.div
-            key={currentQuestion} // React re-renders this when key changes
-            initial={{ x: 50, opacity: 0 }}  // Enter from the right, invisible
-            animate={{ x: 0, opacity: 1 }}   // Move to center, visible
-            exit={{ x: -50, opacity: 0 }}    // Exit to the left, invisible
-            transition={{ duration: 0.3 }}   // Animation speed
+            key={currentQuestion}
+            initial={{ x: 50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -50, opacity: 0 }}
+            transition={{ duration: 0.3 }}
             className="card p-8"
           >
             <div className="text-center mb-8">
@@ -230,27 +188,20 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
               )}
             </div>
 
-            {/* Conditional rendering: show textarea for text questions, option buttons for others */}
             {currentQ.type === 'text' ? (
-              // Text input area for location preferences
               <div className="max-w-2xl mx-auto">
                 <textarea
-                  value={answers[currentQ.id] || ''} // Controlled input: value comes from state
-                  onChange={(e) => handleAnswerChange(currentQ.id, e.target.value)} // Update state when user types
-                  placeholder={currentQ.placeholder} // Hint text inside the textarea
+                  value={answers[currentQ.id] || ''}
+                  onChange={(e) => handleAnswerChange(currentQ.id, e.target.value)}
+                  placeholder={currentQ.placeholder}
                   className="w-full p-4 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none resize-none h-32 text-lg"
                 />
               </div>
             ) : (
-              // Grid of selectable option buttons for single/multiple choice questions
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
-                {/* Loop through each option and create a button */}
                 {currentQ.options.map((option, index) => {
-                  // Check if this option is currently selected
-                  // For multiple: check if value is in the answers array
-                  // For single: check if value equals the answer
                   const isSelected = currentQ.type === 'multiple' 
-                    ? answers[currentQ.id]?.includes(option.value) // ?. is optional chaining (safe if undefined)
+                    ? answers[currentQ.id]?.includes(option.value)
                     : answers[currentQ.id] === option.value
 
                   return (
@@ -287,35 +238,31 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
               </div>
             )}
 
-            {/* Navigation buttons - Back and Continue */}
             <div className="flex justify-between items-center mt-12">
-              {/* Back button - disabled on first question */}
               <button
                 onClick={handleBack}
-                disabled={currentQuestion === 0} // Can't go back from first question
+                disabled={currentQuestion === 0}
                 className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
                   currentQuestion === 0
-                    ? 'text-gray-400 cursor-not-allowed' // Grayed out style when disabled
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100' // Normal style when enabled
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
                 }`}
               >
                 <ChevronLeft className="w-5 h-5" />
                 Back
               </button>
 
-              {/* Continue button - changes text on last question, disabled if question not answered */}
               <motion.button
-                whileHover={canProceed() ? { scale: 1.05 } : {}} // Only animate if button is enabled
+                whileHover={canProceed() ? { scale: 1.05 } : {}}
                 whileTap={canProceed() ? { scale: 0.95 } : {}}
                 onClick={handleNext}
-                disabled={!canProceed()} // Disabled if current question hasn't been answered
+                disabled={!canProceed()}
                 className={`flex items-center gap-3 px-8 py-3 rounded-lg font-semibold transition-all duration-200 ${
                   canProceed()
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-xl' // Enabled style
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed' // Disabled style
+                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-xl'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 }`}
               >
-                {/* Conditional text: different button text on last question */}
                 {isLastQuestion ? 'Find My Perfect Home' : 'Continue'}
                 <ChevronRight className="w-5 h-5" />
               </motion.button>
