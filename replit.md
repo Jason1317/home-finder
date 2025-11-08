@@ -46,9 +46,21 @@ Preferred communication style: Simple, everyday language.
 - **Component Structure**: App.jsx orchestrates flow using `currentStep` state
 - **Flow Stages**:
   1. Welcome.jsx - Landing page with animated background
-  2. QuestionnaireFlow.jsx - User input collection
-  3. Results.jsx - Display of recommendations
+  2. QuestionnaireFlow.jsx - User input collection with cascading state/city dropdowns
+  3. Results.jsx - Display of top 3 property recommendations
 - **Rationale**: Separates concerns and allows users to focus on one task at a time, improving completion rates
+
+**Results Page Architecture (Nov 2025 Redesign)**
+- **Layout**: 3-column responsive grid (1 col mobile, 2 cols large, 3 cols extra-large)
+- **Data Preparation**: `preparedResults` useMemo hook deduplicates by uniqueId (zpid || id || fallback) and limits to exactly 3 results
+- **Modular Component Structure**:
+  - `PropertyCard`: Main assembly component
+  - `PropertyHero`: Hero image with match score, price change badges, and address overlay
+  - `PropertyEssentials`: Price display + beds/baths/sqft grid extracted from rawData
+  - `PropertyInsights`: Expandable section for pros/cons and future agent modules
+- **Extensibility**: PropertyInsights designed as plug-in architecture for future agents (schools, crime, walkability)
+- **Type Safety**: formatPrice() and formatSqft() helpers prevent runtime errors with non-numeric data
+- **UI Enhancements**: Gradient backgrounds, sticky search summary bar, fallback UI for <3 results
 
 **Component Communication Pattern**
 - **Approach**: Props-based callbacks for parent-child communication
