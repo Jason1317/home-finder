@@ -40,17 +40,43 @@ function App() {
         setRecommendations([]) // Clears recommendations on error
       } else {
         // Formats the fetched data with additional properties for display in the UI
-        const formatted = result.data.map(prop => ({
-          ...prop,
-          matchScore: Math.floor(Math.random() * 11) + 85, // Assigns a random match score
-          pros: ['Live Data!', 'Great Location', 'Good Value'], // Example pros
-          cons: ['Needs more data', 'High demand'], // Example cons
-          highlights: [
-            { icon: <GraduationCap />, label: 'Schools', value: 'N/A', good: true },
-            { icon: <Shield />, label: 'Safety', value: 'N/A', good: true }
-          ],
-          stats: { schoolRating: 'N/A', crimeRate: 'N/A', walkScore: 'N/A', commuteTime: 'N/A' }
-        }))
+        const formatted = result.data.map(prop => {
+          // Calculate match score based on budget alignment
+          const budgetRanges = {
+            'under-200k': { min: 0, max: 200000 },
+            '200k-400k': { min: 200000, max: 400000 },
+            '400k-600k': { min: 400000, max: 600000 },
+            '600k-1m': { min: 600000, max: 1000000 },
+            'over-1m': { min: 1000000, max: 10000000 }
+          }
+          
+          const range = budgetRanges[preferences.budget] || { min: 0, max: 10000000 }
+          const price = prop.medianPrice
+          let matchScore = 85
+          
+          // Score based on how well price fits budget
+          if (price >= range.min && price <= range.max) {
+            const midpoint = (range.min + range.max) / 2
+            const deviation = Math.abs(price - midpoint) / (range.max - range.min)
+            matchScore = Math.round(95 - (deviation * 10))
+          } else if (price < range.min) {
+            matchScore = 88
+          } else {
+            matchScore = 86
+          }
+          
+          return {
+            ...prop,
+            matchScore: matchScore,
+            pros: ['Live Data!', 'Great Location', 'Good Value'],
+            cons: ['Needs more data', 'High demand'],
+            highlights: [
+              { icon: <GraduationCap />, label: 'Schools', value: 'N/A', good: true },
+              { icon: <Shield />, label: 'Safety', value: 'N/A', good: true }
+            ],
+            stats: { schoolRating: 'N/A', crimeRate: 'N/A', walkScore: 'N/A', commuteTime: 'N/A' }
+          }
+        })
         setRecommendations(formatted) // Updates state with the formatted recommendations
       }
     } catch (error) {

@@ -54,13 +54,18 @@ Preferred communication style: Simple, everyday language.
 - **Layout**: 3-column responsive grid (1 col mobile, 2 cols large, 3 cols extra-large)
 - **Data Preparation**: `preparedResults` useMemo hook deduplicates by uniqueId (zpid || id || fallback) and limits to exactly 3 results
 - **Modular Component Structure**:
-  - `PropertyCard`: Main assembly component
-  - `PropertyHero`: Hero image with match score, price change badges, and address overlay
+  - `PropertyCard`: Main assembly component with staggered reveal animation
+  - `PropertyHero`: Hero image with calculated match score, price change badges, and address overlay
   - `PropertyEssentials`: Price display + beds/baths/sqft grid extracted from rawData
-  - `PropertyInsights`: Expandable section for pros/cons and future agent modules
+  - `PropertyInsights`: Expandable section for pros/cons and future agent modules with working Zillow links
+- **Match Score Calculation**: Intelligent scoring based on budget alignment (85-95% range)
+  - Properties within budget score 90-95% based on proximity to budget midpoint
+  - Properties below budget score 88% (good value)
+  - Properties above budget score 86% (stretch option)
 - **Extensibility**: PropertyInsights designed as plug-in architecture for future agents (schools, crime, walkability)
 - **Type Safety**: formatPrice() and formatSqft() helpers prevent runtime errors with non-numeric data
-- **UI Enhancements**: Gradient backgrounds, sticky search summary bar, fallback UI for <3 results
+- **UI Enhancements**: Gradient backgrounds, sticky search summary bar, fallback UI for <3 results, smooth one-by-one card reveal animation
+- **External Links**: Each property links to full Zillow listing via zpid in new tab
 
 **Component Communication Pattern**
 - **Approach**: Props-based callbacks for parent-child communication

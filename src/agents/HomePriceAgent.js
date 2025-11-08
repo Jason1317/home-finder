@@ -63,15 +63,21 @@ export class HomePriceAgent {
     // Ensures 'data.props' is an array, defaulting to an empty array if not.
     const propsArray = Array.isArray(data?.props) ? data.props : []
     // Maps each property object to a new, simplified structure.
-    return propsArray.map(prop => ({
-      id: prop?.zpid ?? `fallback-${Math.random()}`, // Unique ID for the property
-      city: prop?.city || 'Unknown', // City name
-      state: prop?.state || '', // State name
-      medianPrice: Number(prop?.price) || 0, // Median price, converted to a number
-      image: prop?.imgSrc || 'https://via.placeholder.com/800x500?text=No+Image', // Image URL
-      neighborhood: prop?.address || [prop?.city, prop?.state].filter(Boolean).join(', '), // Neighborhood/address
-      priceChange: prop?.priceChangeText, // Text indicating price change
-      rawData: prop // Keeps the original raw data for debugging or future use
-    }))
+    return propsArray.map(prop => {
+      const city = prop?.city || ''
+      const state = prop?.state || ''
+      const neighborhood = prop?.address || prop?.streetAddress || `${city}, ${state}`.trim()
+      
+      return {
+        id: prop?.zpid ?? `fallback-${Math.random()}`,
+        city: city,
+        state: state,
+        medianPrice: Number(prop?.price) || 0,
+        image: prop?.imgSrc || 'https://via.placeholder.com/800x500?text=No+Image',
+        neighborhood: neighborhood,
+        priceChange: prop?.priceChangeText,
+        rawData: prop
+      }
+    })
   }
 }

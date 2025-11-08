@@ -133,7 +133,7 @@ const Results = ({ preferences, recommendations, onRestart }) => {
             </div>
             <div>
               <div className="text-2xl font-bold text-gray-900">{beds}</div>
-              <div className="text-xs text-gray-600">Bedrooms</div>
+              <div className="text-xs text-gray-600">Beds</div>
             </div>
           </div>
 
@@ -143,7 +143,7 @@ const Results = ({ preferences, recommendations, onRestart }) => {
             </div>
             <div>
               <div className="text-2xl font-bold text-gray-900">{baths}</div>
-              <div className="text-xs text-gray-600">Bathrooms</div>
+              <div className="text-xs text-gray-600">Baths</div>
             </div>
           </div>
 
@@ -233,19 +233,28 @@ const Results = ({ preferences, recommendations, onRestart }) => {
       </AnimatePresence>
 
       {/* View Listing CTA */}
-      <button className="w-full mt-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg">
+      <a 
+        href={`https://www.zillow.com/homedetails/${property.rawData?.zpid}_zpid/`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-full mt-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg"
+      >
         <ExternalLink className="w-5 h-5" />
-        View Full Listing on Zillow
-      </button>
+        View Listing on Zillow
+      </a>
     </div>
   )
 
   // PropertyCard - Main card component that assembles all modular sections
   const PropertyCard = ({ property, index }) => (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.15, duration: 0.5 }}
+      initial={{ opacity: 0, y: 50, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ 
+        delay: index * 0.2, 
+        duration: 0.6,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }}
       className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-shadow duration-300"
     >
       <PropertyHero property={property} />
@@ -340,28 +349,6 @@ const Results = ({ preferences, recommendations, onRestart }) => {
           </motion.div>
         )}
 
-        {/* Bottom CTA Section */}
-        {preparedResults.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-10 text-white text-center shadow-2xl"
-          >
-            <h3 className="text-3xl font-bold mb-4">Ready to Take the Next Step?</h3>
-            <p className="text-lg mb-8 opacity-90 max-w-2xl mx-auto">
-              Connect with local real estate agents, schedule virtual tours, or get personalized market insights for these properties
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <button className="bg-white text-blue-600 font-bold px-8 py-4 rounded-lg hover:bg-gray-100 transition-all duration-200 shadow-lg">
-                Connect with Agents
-              </button>
-              <button className="border-2 border-white text-white font-bold px-8 py-4 rounded-lg hover:bg-white/10 transition-all duration-200">
-                Schedule Tours
-              </button>
-            </div>
-          </motion.div>
-        )}
       </div>
 
       {/* Sticky search summary bar at bottom */}
