@@ -3,8 +3,11 @@ import { motion } from 'framer-motion'
 import { MapPin, DollarSign, Star, Users, GraduationCap, Shield, Car, Coffee, Home, ChevronRight, ExternalLink, RefreshCw, Heart, TrendingUp, TrendingDown } from 'lucide-react'
 
 const Results = ({ preferences, recommendations, onRestart }) => {
+  // Tracks which city is selected for detailed sidebar view
   const [selectedCity, setSelectedCity] = useState(null)
 
+  // CityCard - Summary card component for each recommended neighborhood
+  // Displays match score, pricing, and key highlights
   const CityCard = ({ city, isSelected, onClick }) => (
     <motion.div
       layoutId={`city-${city.id}`}
@@ -71,6 +74,8 @@ const Results = ({ preferences, recommendations, onRestart }) => {
     </motion.div>
   )
 
+  // DetailedView - Expanded sidebar component showing full neighborhood details
+  // Includes pros/cons, statistics, and direct links to property listings
   const DetailedView = ({ city }) => (
     <motion.div
       initial={{ opacity: 0, x: 300 }}
@@ -113,6 +118,7 @@ const Results = ({ preferences, recommendations, onRestart }) => {
           </button>
         </div>
 
+        {/* Pros and cons based on user preferences */}
         <div className="grid grid-cols-2 gap-6 mb-8">
           <div>
             <h3 className="font-semibold text-lg mb-3 text-green-700">Why You'll Love It</h3>
@@ -139,6 +145,7 @@ const Results = ({ preferences, recommendations, onRestart }) => {
           </div>
         </div>
 
+        {/* Quick stats: school ratings, crime, walkability, commute times */}
         <div className="bg-gray-50 rounded-lg p-4">
           <h3 className="font-semibold mb-3">Quick Stats</h3>
           <div className="grid grid-cols-4 gap-4 text-center">
@@ -192,6 +199,7 @@ const Results = ({ preferences, recommendations, onRestart }) => {
           </button>
         </motion.div>
 
+        {/* Layout: 2/3 width for results list, 1/3 for detailed sidebar view */}
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <motion.div
@@ -246,6 +254,7 @@ const Results = ({ preferences, recommendations, onRestart }) => {
             </motion.div>
           </div>
 
+          {/* Sidebar - shows detailed view when city is selected, placeholder otherwise */}
           <div className="lg:col-span-1">
             <div className="sticky top-8">
               {selectedCity ? (
@@ -272,6 +281,7 @@ const Results = ({ preferences, recommendations, onRestart }) => {
           </div>
         </div>
 
+        {/* Sticky preferences bar at bottom - shows user's original search criteria */}
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -323,6 +333,7 @@ const Results = ({ preferences, recommendations, onRestart }) => {
           </div>
         </motion.div>
 
+        {/* Spacer to prevent content overlap with fixed preferences bar */}
         <div className="h-48"></div>
       </div>
     </motion.div>

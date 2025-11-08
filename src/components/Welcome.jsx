@@ -4,6 +4,7 @@ import { Home, MapPin, Heart, Star, ChevronRight, Search, Users, Building } from
 import houseGif from '../assets/house.gif';
 
 const Welcome = ({ onStart }) => {
+  // Feature cards data - highlights key value propositions
   const features = [
     {
       icon: <Search className="w-8 h-8 text-blue-600" />,
@@ -35,6 +36,7 @@ const Welcome = ({ onStart }) => {
       className="min-h-screen flex items-center justify-center p-4"
     >
       <div className="max-w-6xl mx-auto">
+        {/* Hero section */}
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -70,6 +72,7 @@ const Welcome = ({ onStart }) => {
           </motion.button>
         </motion.div>
 
+        {/* Feature cards with staggered animation */}
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -97,6 +100,7 @@ const Welcome = ({ onStart }) => {
           ))}
         </motion.div>
 
+        {/* Stats section */}
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}

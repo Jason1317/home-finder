@@ -6,6 +6,8 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState({})
 
+  // Core questionnaire data - defines all questions, options, and validation rules
+  // Each question has: id (key for answers object), type (single/multiple/text), and options
   const questions = [
     {
       id: 'experience',
@@ -73,6 +75,8 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
   const currentQ = questions[currentQuestion]
   const isLastQuestion = currentQuestion === questions.length - 1
 
+  // Handles answer changes for both single-select and multiple-select questions
+  // For multiple-select: toggles selection and enforces maxSelections limit
   const handleAnswerChange = (questionId, value) => {
     console.log('Answer changed:', questionId, value);
     const question = questions.find(q => q.id === questionId)
@@ -112,6 +116,8 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
     setCurrentQuestion(prev => Math.max(0, prev - 1))
   }
 
+  // Validates if user has answered current question before allowing proceed
+  // Different validation rules for multiple-select, text, and single-select
   const canProceed = () => {
     const answer = answers[currentQ.id]
     
@@ -123,6 +129,7 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
     return answer !== undefined
   }
 
+  // Loading state - shown while fetching recommendations from API
   if (isLoading) {
     return (
       <motion.div
@@ -153,6 +160,7 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
       className="min-h-screen flex items-center justify-center p-4"
     >
       <div className="max-w-4xl w-full">
+        {/* Progress indicator */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm text-gray-600">Question {currentQuestion + 1} of {questions.length}</span>
@@ -168,6 +176,7 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
           </div>
         </div>
 
+        {/* Question card with slide animation */}
         <AnimatePresence mode="wait">
           <motion.div
             key={currentQuestion}
@@ -188,6 +197,7 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
               )}
             </div>
 
+            {/* Text input for open-ended questions */}
             {currentQ.type === 'text' ? (
               <div className="max-w-2xl mx-auto">
                 <textarea
@@ -199,6 +209,7 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
+                {/* Option cards for single/multiple select questions */}
                 {currentQ.options.map((option, index) => {
                   const isSelected = currentQ.type === 'multiple' 
                     ? answers[currentQ.id]?.includes(option.value)
@@ -238,6 +249,7 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
               </div>
             )}
 
+            {/* Navigation buttons */}
             <div className="flex justify-between items-center mt-12">
               <button
                 onClick={handleBack}
