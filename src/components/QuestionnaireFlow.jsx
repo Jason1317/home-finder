@@ -5,6 +5,32 @@ import { ChevronRight, ChevronLeft, DollarSign, MapPin, Users, Car, Coffee, Grad
 const QuestionnaireFlow = ({ onComplete, isLoading }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState({})
+  const [selectedState, setSelectedState] = useState('')
+
+  // State and city data for location dropdown
+  // Contains major US states with popular cities for each
+  const locationData = {
+    'California': ['Los Angeles', 'San Francisco', 'San Diego', 'San Jose', 'Sacramento', 'Oakland', 'Fresno', 'Long Beach'],
+    'Texas': ['Houston', 'San Antonio', 'Dallas', 'Austin', 'Fort Worth', 'El Paso', 'Arlington', 'Corpus Christi'],
+    'Florida': ['Jacksonville', 'Miami', 'Tampa', 'Orlando', 'St. Petersburg', 'Tallahassee', 'Fort Lauderdale', 'Gainesville'],
+    'New York': ['New York City', 'Buffalo', 'Rochester', 'Albany', 'Syracuse', 'Yonkers', 'White Plains', 'Ithaca'],
+    'Pennsylvania': ['Philadelphia', 'Pittsburgh', 'Allentown', 'Erie', 'Reading', 'Scranton', 'Bethlehem', 'Lancaster'],
+    'Illinois': ['Chicago', 'Aurora', 'Naperville', 'Joliet', 'Rockford', 'Springfield', 'Peoria', 'Elgin'],
+    'Ohio': ['Columbus', 'Cleveland', 'Cincinnati', 'Toledo', 'Akron', 'Dayton', 'Parma', 'Canton'],
+    'Georgia': ['Atlanta', 'Augusta', 'Columbus', 'Macon', 'Savannah', 'Athens', 'Sandy Springs', 'Roswell'],
+    'North Carolina': ['Charlotte', 'Raleigh', 'Greensboro', 'Durham', 'Winston-Salem', 'Fayetteville', 'Cary', 'Wilmington'],
+    'Michigan': ['Detroit', 'Grand Rapids', 'Warren', 'Sterling Heights', 'Ann Arbor', 'Lansing', 'Flint', 'Dearborn'],
+    'Arizona': ['Phoenix', 'Tucson', 'Mesa', 'Chandler', 'Scottsdale', 'Glendale', 'Gilbert', 'Tempe'],
+    'Washington': ['Seattle', 'Spokane', 'Tacoma', 'Vancouver', 'Bellevue', 'Everett', 'Kent', 'Renton'],
+    'Massachusetts': ['Boston', 'Worcester', 'Springfield', 'Cambridge', 'Lowell', 'Brockton', 'Quincy', 'Lynn'],
+    'Colorado': ['Denver', 'Colorado Springs', 'Aurora', 'Fort Collins', 'Lakewood', 'Thornton', 'Arvada', 'Boulder'],
+    'Oregon': ['Portland', 'Salem', 'Eugene', 'Gresham', 'Hillsboro', 'Beaverton', 'Bend', 'Medford'],
+    'Nevada': ['Las Vegas', 'Henderson', 'Reno', 'North Las Vegas', 'Sparks', 'Carson City', 'Fernley', 'Elko'],
+    'Tennessee': ['Nashville', 'Memphis', 'Knoxville', 'Chattanooga', 'Clarksville', 'Murfreesboro', 'Franklin', 'Jackson'],
+    'Virginia': ['Virginia Beach', 'Norfolk', 'Chesapeake', 'Richmond', 'Newport News', 'Alexandria', 'Hampton', 'Roanoke'],
+    'Maryland': ['Baltimore', 'Frederick', 'Rockville', 'Gaithersburg', 'Bowie', 'Hagerstown', 'Annapolis', 'College Park'],
+    'Wisconsin': ['Milwaukee', 'Madison', 'Green Bay', 'Kenosha', 'Racine', 'Appleton', 'Waukesha', 'Eau Claire']
+  }
 
   // Core questionnaire data - defines all questions, options, and validation rules
   // Each question has: id (key for answers object), type (single/multiple/text), and options
@@ -65,10 +91,9 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
     },
     {
       id: 'location',
-      title: "Any location preferences?",
-      subtitle: "Regions, states, or areas you're interested in or want to avoid",
-      type: 'text',
-      placeholder: 'e.g., Prefer West Coast, avoid harsh winters, close to Austin...'
+      title: "Where are you looking to buy?",
+      subtitle: "Select a state and city to find your perfect home",
+      type: 'cascading'
     }
   ]
 
@@ -104,6 +129,26 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
     }
   }
 
+  // Handles state selection for cascading location dropdown
+  // Resets city selection when state changes
+  const handleStateChange = (state) => {
+    setSelectedState(state)
+    // Reset city when state changes
+    setAnswers(prev => ({
+      ...prev,
+      location: ''
+    }))
+  }
+
+  // Handles city selection for cascading location dropdown
+  const handleCityChange = (city) => {
+    const state = selectedState || answers.location?.split(', ')[1]
+    setAnswers(prev => ({
+      ...prev,
+      location: `${city}, ${state}`
+    }))
+  }
+
   const handleNext = () => {
     if (isLastQuestion) {
       onComplete(answers)
@@ -117,7 +162,7 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
   }
 
   // Validates if user has answered current question before allowing proceed
-  // Different validation rules for multiple-select, text, and single-select
+  // Different validation rules for multiple-select, text, cascading, and single-select
   const canProceed = () => {
     const answer = answers[currentQ.id]
     
@@ -125,6 +170,8 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
       return answer && answer.length > 0
     } else if (currentQ.type === 'text') {
       return answer && answer.trim().length > 0
+    } else if (currentQ.type === 'cascading') {
+      return answer && answer.trim().length > 0 && selectedState
     }
     return answer !== undefined
   }
@@ -197,8 +244,65 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
               )}
             </div>
 
-            {/* Text input for open-ended questions */}
-            {currentQ.type === 'text' ? (
+            {/* Cascading dropdowns for location selection */}
+            {currentQ.type === 'cascading' ? (
+              <div className="max-w-2xl mx-auto space-y-6">
+                {/* State dropdown */}
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2 text-left">
+                    Select State
+                  </label>
+                  <select
+                    value={selectedState || (answers[currentQ.id] ? answers[currentQ.id].split(', ')[1] : '')}
+                    onChange={(e) => handleStateChange(e.target.value)}
+                    className="w-full p-4 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-lg bg-white cursor-pointer"
+                  >
+                    <option value="">Choose a state...</option>
+                    {Object.keys(locationData).sort().map(state => (
+                      <option key={state} value={state}>{state}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* City dropdown - only shown when state is selected */}
+                {(selectedState || (answers[currentQ.id] && answers[currentQ.id].split(', ')[1])) && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <label className="block text-gray-700 font-medium mb-2 text-left">
+                      Select City
+                    </label>
+                    <select
+                      value={answers[currentQ.id]?.split(', ')[0] || ''}
+                      onChange={(e) => handleCityChange(e.target.value)}
+                      className="w-full p-4 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-lg bg-white cursor-pointer"
+                    >
+                      <option value="">Choose a city...</option>
+                      {locationData[selectedState || answers[currentQ.id]?.split(', ')[1]]?.map(city => (
+                        <option key={city} value={city}>{city}</option>
+                      ))}
+                    </select>
+                  </motion.div>
+                )}
+
+                {/* Display selected location */}
+                {answers[currentQ.id] && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="p-4 bg-blue-50 border-2 border-blue-200 rounded-lg"
+                  >
+                    <div className="flex items-center gap-2 text-blue-700">
+                      <MapPin className="w-5 h-5" />
+                      <span className="font-semibold">Selected Location:</span>
+                      <span>{answers[currentQ.id]}</span>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+            ) : currentQ.type === 'text' ? (
               <div className="max-w-2xl mx-auto">
                 <textarea
                   value={answers[currentQ.id] || ''}
@@ -207,7 +311,7 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
                   className="w-full p-4 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none resize-none h-32 text-lg"
                 />
               </div>
-            ) : (
+            ) : currentQ.options ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
                 {/* Option cards for single/multiple select questions */}
                 {currentQ.options.map((option, index) => {
@@ -247,7 +351,7 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
                   )
                 })}
               </div>
-            )}
+            ) : null}
 
             {/* Navigation buttons */}
             <div className="flex justify-between items-center mt-12">
