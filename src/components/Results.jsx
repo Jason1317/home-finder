@@ -1,173 +1,225 @@
-import React, { useState } from 'react'
-import { motion } from 'framer-motion'
-import { MapPin, DollarSign, Star, Users, GraduationCap, Shield, Car, Coffee, Home, ChevronRight, ExternalLink, RefreshCw, Heart, TrendingUp, TrendingDown } from 'lucide-react'
+import React, { useState, useMemo } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { MapPin, DollarSign, Star, Home, RefreshCw, Heart, TrendingUp, TrendingDown, Bed, Bath, Maximize, ChevronDown, ChevronUp, ExternalLink, AlertCircle, Sparkles } from 'lucide-react'
 
 const Results = ({ preferences, recommendations, onRestart }) => {
-  // Tracks which city is selected for detailed sidebar view
-  const [selectedCity, setSelectedCity] = useState(null)
+  // Deduplicate and limit results to 3 unique properties
+  const preparedResults = useMemo(() => {
+    if (!recommendations || recommendations.length === 0) return []
+    
+    // Use Map to deduplicate by unique ID
+    const uniqueMap = new Map()
+    recommendations.forEach(prop => {
+      const uniqueId = prop.id || prop.zpid || `${prop.city}-${prop.neighborhood}`
+      if (!uniqueMap.has(uniqueId)) {
+        uniqueMap.set(uniqueId, prop)
+      }
+    })
+    
+    // Convert to array and limit to 3
+    const unique = Array.from(uniqueMap.values())
+    const limited = unique.slice(0, 3)
+    
+    // Log truncation for telemetry
+    if (unique.length > 3) {
+      console.log(`Truncated ${unique.length} results to 3`)
+    }
+    
+    return limited
+  }, [recommendations])
 
-  // CityCard - Summary card component for each recommended neighborhood
-  // Displays match score, pricing, and key highlights
-  const CityCard = ({ city, isSelected, onClick }) => (
-    <motion.div
-      layoutId={`city-${city.id}`}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5 }}
-      onClick={onClick}
-      className={`cursor-pointer card overflow-hidden ${isSelected ? 'ring-2 ring-blue-500' : ''}`}
-    >
-      <div className="relative">
-        <img 
-          src={city.image} 
-          alt={`${city.city} neighborhood`}
-          className="w-full h-48 object-cover"
-        />
-        <div className="absolute top-4 right-4 bg-white rounded-full px-3 py-1 shadow-lg">
-          <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 text-yellow-500 fill-current" />
-            <span className="font-semibold text-sm">{city.matchScore}% Match</span>
-          </div>
-        </div>
-        <div className="absolute top-4 left-4 bg-black/50 rounded-lg px-3 py-1">
-          <span className="text-white text-sm font-medium">{city.neighborhood}</span>
-        </div>
-      </div>
+  const [expandedProperty, setExpandedProperty] = useState(null)
+
+  // PropertyHero - Hero image section with match score badge
+  // Modular component that displays property image and key badges
+  const PropertyHero = ({ property }) => (
+    <div className="relative h-80 overflow-hidden rounded-t-2xl">
+      <img 
+        src={property.image} 
+        alt={property.neighborhood}
+        className="w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
       
-      <div className="p-6">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <h3 className="text-xl font-bold text-gray-800">{city.city}</h3>
-            <p className="text-gray-600">{city.state}</p>
-          </div>
-          <div className="text-right">
-            <div className="text-lg font-semibold text-gray-800">
-              ${city.medianPrice.toLocaleString()}
-            </div>
-            <div className={`text-sm flex items-center gap-1 ${
-              city.priceChange && city.priceChange.startsWith('+') ? 'text-green-600' : 'text-red-600'
-            }`}>
-              {city.priceChange && city.priceChange.startsWith('+') ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-              {city.priceChange}
-            </div>
-          </div>
+      {/* Match Score Badge */}
+      <div className="absolute top-4 right-4 bg-white rounded-full px-4 py-2 shadow-xl">
+        <div className="flex items-center gap-2">
+          <Star className="w-5 h-5 text-yellow-500 fill-current" />
+          <span className="font-bold text-lg">{property.matchScore}%</span>
         </div>
-
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          {city.highlights.map((highlight, index) => (
-            <div key={index} className="flex items-center gap-2">
-              <div className={`p-1 rounded ${highlight.good ? 'text-green-600' : 'text-orange-600'}`}>
-                {highlight.icon}
-              </div>
-              <div>
-                <div className="text-xs text-gray-600">{highlight.label}</div>
-                <div className="font-medium text-sm">{highlight.value}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <button className="w-full mt-4 bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium py-2 rounded-lg transition-colors duration-200">
-          View Details
-        </button>
       </div>
-    </motion.div>
+
+      {/* Price Change Tag */}
+      {property.priceChange && (
+        <div className="absolute top-4 left-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg px-3 py-1.5 shadow-lg">
+          <div className="flex items-center gap-1">
+            {property.priceChange.startsWith('+') ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+            <span className="font-semibold text-sm">{property.priceChange}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Address Overlay */}
+      <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+        <div className="flex items-start gap-2">
+          <MapPin className="w-5 h-5 mt-1 flex-shrink-0" />
+          <div>
+            <h3 className="text-2xl font-bold mb-1">{property.neighborhood}</h3>
+            <p className="text-lg opacity-90">{property.city}, {property.state}</p>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 
-  // DetailedView - Expanded sidebar component showing full neighborhood details
-  // Includes pros/cons, statistics, and direct links to property listings
-  const DetailedView = ({ city }) => (
+  // PropertyEssentials - Core property facts section
+  // Displays price, beds, baths, sqft - extracted from rawData when available
+  const PropertyEssentials = ({ property }) => {
+    const beds = property.rawData?.bedrooms || property.rawData?.beds || 'N/A'
+    const baths = property.rawData?.bathrooms || property.rawData?.baths || 'N/A'
+    const sqft = property.rawData?.livingArea || property.rawData?.sqft || 'N/A'
+    
+    return (
+      <div className="p-6 border-b border-gray-100">
+        {/* Price */}
+        <div className="mb-6">
+          <div className="flex items-baseline gap-2">
+            <span className="text-4xl font-bold text-gray-900">
+              ${property.medianPrice?.toLocaleString() || 'Contact for price'}
+            </span>
+          </div>
+        </div>
+
+        {/* Property Details Grid */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-3">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <Bed className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-gray-900">{beds}</div>
+              <div className="text-xs text-gray-600">Bedrooms</div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-3">
+            <div className="p-2 bg-purple-100 rounded-lg">
+              <Bath className="w-5 h-5 text-purple-600" />
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-gray-900">{baths}</div>
+              <div className="text-xs text-gray-600">Bathrooms</div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-3">
+            <div className="p-2 bg-green-100 rounded-lg">
+              <Maximize className="w-5 h-5 text-green-600" />
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-gray-900">{sqft !== 'N/A' ? sqft.toLocaleString() : 'N/A'}</div>
+              <div className="text-xs text-gray-600">Sq Ft</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // PropertyInsights - Expandable insights section
+  // Modular container for future agent data (schools, crime, walkability, etc.)
+  const PropertyInsights = ({ property, isExpanded, onToggle }) => (
+    <div className="p-6">
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center justify-between mb-4 hover:bg-gray-50 rounded-lg p-2 transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-purple-600" />
+          <h3 className="font-bold text-lg text-gray-900">AI-Powered Insights</h3>
+        </div>
+        {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+      </button>
+
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            {/* Placeholder for future agent modules */}
+            <div className="space-y-4">
+              {/* Pros Section - using existing data */}
+              {property.pros && property.pros.length > 0 && (
+                <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                  <h4 className="font-semibold text-green-900 mb-2">Why You'll Love It</h4>
+                  <ul className="space-y-1">
+                    {property.pros.map((pro, idx) => (
+                      <li key={idx} className="text-sm text-green-800 flex items-start gap-2">
+                        <span className="text-green-600">✓</span>
+                        <span>{pro}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Cons Section - using existing data */}
+              {property.cons && property.cons.length > 0 && (
+                <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
+                  <h4 className="font-semibold text-orange-900 mb-2">Things to Consider</h4>
+                  <ul className="space-y-1">
+                    {property.cons.map((con, idx) => (
+                      <li key={idx} className="text-sm text-orange-800 flex items-start gap-2">
+                        <span className="text-orange-600">!</span>
+                        <span>{con}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Future agent data will be added here as modular sections */}
+              <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4" />
+                  More Data Coming Soon
+                </h4>
+                <p className="text-sm text-blue-800">
+                  Additional insights about schools, crime rates, walkability, and neighborhood trends will appear here as more agents are integrated.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* View Listing CTA */}
+      <button className="w-full mt-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg">
+        <ExternalLink className="w-5 h-5" />
+        View Full Listing on Zillow
+      </button>
+    </div>
+  )
+
+  // PropertyCard - Main card component that assembles all modular sections
+  const PropertyCard = ({ property, index }) => (
     <motion.div
-      initial={{ opacity: 0, x: 300 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 300 }}
-      className="bg-white rounded-xl shadow-xl overflow-hidden"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.15, duration: 0.5 }}
+      className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-shadow duration-300"
     >
-      <div className="relative h-64">
-        <img 
-          src={city.image} 
-          alt={city.city}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        <div className="absolute bottom-4 left-4 text-white">
-          <h2 className="text-2xl font-bold">{city.city}</h2>
-          <p className="text-lg opacity-90">{city.neighborhood} • {city.state}</p>
-        </div>
-        <button
-          onClick={() => setSelectedCity(null)}
-          className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/30 transition-colors"
-        >
-          ×
-        </button>
-      </div>
-
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1">
-              <Star className="w-5 h-5 text-yellow-500 fill-current" />
-              <span className="font-semibold">{city.matchScore}% Match</span>
-            </div>
-            <div className="text-gray-400">•</div>
-            <div className="font-semibold text-lg">${city.medianPrice.toLocaleString()}</div>
-          </div>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-            <ExternalLink className="w-4 h-4" />
-            View Listings
-          </button>
-        </div>
-
-        {/* Pros and cons based on user preferences */}
-        <div className="grid grid-cols-2 gap-6 mb-8">
-          <div>
-            <h3 className="font-semibold text-lg mb-3 text-green-700">Why You'll Love It</h3>
-            <ul className="space-y-2">
-              {city.pros.map((pro, index) => (
-                <li key={index} className="flex items-start gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
-                  <span className="text-gray-700">{pro}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="font-semibold text-lg mb-3 text-orange-700">Consider These Points</h3>
-            <ul className="space-y-2">
-              {city.cons.map((con, index) => (
-                <li key={index} className="flex items-start gap-2">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0" />
-                  <span className="text-gray-700">{con}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        {/* Quick stats: school ratings, crime, walkability, commute times */}
-        <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="font-semibold mb-3">Quick Stats</h3>
-          <div className="grid grid-cols-4 gap-4 text-center">
-            <div>
-              <div className="text-2xl font-bold text-blue-600">{city.stats.schoolRating}</div>
-              <div className="text-sm text-gray-600">School Rating</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-green-600">{city.stats.crimeRate}</div>
-              <div className="text-sm text-gray-600">Crime Rate</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-purple-600">{city.stats.walkScore}</div>
-              <div className="text-sm text-gray-600">Walk Score</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-orange-600">{city.stats.commuteTime}m</div>
-              <div className="text-sm text-gray-600">Avg Commute</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PropertyHero property={property} />
+      <PropertyEssentials property={property} />
+      <PropertyInsights 
+        property={property}
+        isExpanded={expandedProperty === property.id}
+        onToggle={() => setExpandedProperty(expandedProperty === property.id ? null : property.id)}
+      />
     </motion.div>
   )
 
@@ -176,166 +228,140 @@ const Results = ({ preferences, recommendations, onRestart }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen p-4"
+      className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6 pb-32"
     >
       <div className="max-w-7xl mx-auto">
+        {/* Header Section */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">
-            Your Perfect Home Matches
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+            Your Top 3 Home Matches
           </h1>
           <p className="text-xl text-gray-600 mb-6">
-            Based on your preferences, we found {recommendations ? recommendations.length : 0} neighborhoods that match your lifestyle
+            Curated specifically for your lifestyle in {preferences.location || 'your selected area'}
           </p>
           <button
             onClick={onRestart}
-            className="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors duration-200"
+            className="inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 px-6 py-3 rounded-lg shadow-md transition-all duration-200 font-medium"
           >
-            <RefreshCw className="w-4 h-4" />
-            Start Over
+            <RefreshCw className="w-5 h-5" />
+            Start New Search
           </button>
         </motion.div>
 
-        {/* Layout: 2/3 width for results list, 1/3 for detailed sidebar view */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <motion.div
-              initial={{ x: -50, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="space-y-6"
-            >
-              {recommendations && recommendations.length > 0 ? (
-                recommendations.map((city, index) => (
-                  <motion.div
-                    key={city.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <CityCard 
-                      city={city} 
-                      isSelected={selectedCity?.id === city.id}
-                      onClick={() => setSelectedCity(city)}
-                    />
-                  </motion.div>
-                ))
-              ) : (
-                <div className="bg-white rounded-xl shadow-lg p-8 text-center">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">No Results Found</h3>
-                  <p className="text-gray-600">
-                    We couldn't find any properties matching your criteria. Try adjusting your preferences and searching again.
-                  </p>
-                </div>
-              )}
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-              className="mt-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white text-center"
-            >
-              <h3 className="text-2xl font-bold mb-4">Ready to Explore Further?</h3>
-              <p className="mb-6 opacity-90">
-                Connect with local real estate agents, schedule virtual tours, or get personalized market reports
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <button className="bg-white text-blue-600 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors">
-                  Connect with Agents
-                </button>
-                <button className="border-2 border-white text-white font-semibold px-6 py-3 rounded-lg hover:bg-white/10 transition-colors">
-                  Get Market Reports
-                </button>
-              </div>
-            </motion.div>
+        {/* Results Grid - 3 column responsive layout */}
+        {preparedResults.length > 0 ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-12">
+            {preparedResults.map((property, index) => (
+              <PropertyCard key={property.id} property={property} index={index} />
+            ))}
           </div>
-
-          {/* Sidebar - shows detailed view when city is selected, placeholder otherwise */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8">
-              {selectedCity ? (
-                <DetailedView city={selectedCity} />
-              ) : (
-                <motion.div
-                  initial={{ x: 50, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.4 }}
-                  className="bg-white rounded-xl shadow-lg p-8 text-center"
-                >
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <MapPin className="w-8 h-8 text-blue-600" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                    Select a City
-                  </h3>
-                  <p className="text-gray-600">
-                    Click on any city card to see detailed information, pros and cons, and local insights.
-                  </p>
-                </motion.div>
-              )}
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-2xl shadow-xl p-12 text-center"
+          >
+            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Home className="w-10 h-10 text-gray-400" />
             </div>
-          </div>
-        </div>
+            <h3 className="text-2xl font-bold text-gray-800 mb-3">No Properties Found</h3>
+            <p className="text-gray-600 mb-6 max-w-md mx-auto">
+              We couldn't find any properties matching your criteria in {preferences.location}. 
+              Try adjusting your budget or searching in a different area.
+            </p>
+            <button
+              onClick={onRestart}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-lg transition-all duration-200"
+            >
+              Search Again
+            </button>
+          </motion.div>
+        )}
 
-        {/* Sticky preferences bar at bottom - shows user's original search criteria */}
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl border-t-2 border-gray-200 p-6 z-50"
-        >
-          <div className="max-w-7xl mx-auto">
-            <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">
-              Based on Your Preferences
-            </h3>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="text-center">
-                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <DollarSign className="w-5 h-5 text-green-600" />
-                </div>
-                <h4 className="font-semibold text-gray-800 text-sm">Budget Range</h4>
-                <p className="text-gray-600 text-xs mt-1">
-                  {preferences.budget?.replace('-', ' - $').replace('k', 'K').replace('m', 'M') || 'Not specified'}
-                </p>
+        {/* Info card for <3 results */}
+        {preparedResults.length > 0 && preparedResults.length < 3 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-12"
+          >
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-blue-100 rounded-lg">
+                <AlertCircle className="w-6 h-6 text-blue-600" />
               </div>
-              <div className="text-center">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <Heart className="w-5 h-5 text-blue-600" />
-                </div>
-                <h4 className="font-semibold text-gray-800 text-sm">Top Priorities</h4>
-                <p className="text-gray-600 text-xs mt-1">
-                  {preferences.lifestyle?.length || 0} selected
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <Shield className="w-5 h-5 text-red-600" />
-                </div>
-                <h4 className="font-semibold text-gray-800 text-sm">Deal Breakers</h4>
-                <p className="text-gray-600 text-xs mt-1">
-                  {preferences.dealbreakers?.length || 0} selected
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <Users className="w-5 h-5 text-purple-600" />
-                </div>
-                <h4 className="font-semibold text-gray-800 text-sm">Experience</h4>
-                <p className="text-gray-600 text-xs mt-1">
-                  {preferences.experience?.replace('-', ' ') || 'Not specified'}
+              <div>
+                <h4 className="font-bold text-blue-900 mb-2">Limited Results Available</h4>
+                <p className="text-blue-800">
+                  We found {preparedResults.length} {preparedResults.length === 1 ? 'property' : 'properties'} matching your criteria. 
+                  Try adjusting your budget range or expanding your search location for more options.
                 </p>
               </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        )}
 
-        {/* Spacer to prevent content overlap with fixed preferences bar */}
-        <div className="h-48"></div>
+        {/* Bottom CTA Section */}
+        {preparedResults.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-10 text-white text-center shadow-2xl"
+          >
+            <h3 className="text-3xl font-bold mb-4">Ready to Take the Next Step?</h3>
+            <p className="text-lg mb-8 opacity-90 max-w-2xl mx-auto">
+              Connect with local real estate agents, schedule virtual tours, or get personalized market insights for these properties
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <button className="bg-white text-blue-600 font-bold px-8 py-4 rounded-lg hover:bg-gray-100 transition-all duration-200 shadow-lg">
+                Connect with Agents
+              </button>
+              <button className="border-2 border-white text-white font-bold px-8 py-4 rounded-lg hover:bg-white/10 transition-all duration-200">
+                Schedule Tours
+              </button>
+            </div>
+          </motion.div>
+        )}
       </div>
+
+      {/* Sticky search summary bar at bottom */}
+      <motion.div
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.8 }}
+        className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-2xl border-t-2 border-gray-200 py-4 px-6 z-50"
+      >
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-blue-600" />
+              <span className="font-semibold text-gray-900">{preferences.location || 'Location'}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-green-600" />
+              <span className="text-gray-700">
+                {preferences.budget?.replace('-', ' - $').replace('k', 'K').replace('m', 'M') || 'Any Budget'}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Home className="w-5 h-5 text-purple-600" />
+              <span className="text-gray-700">{preparedResults.length} {preparedResults.length === 1 ? 'Match' : 'Matches'}</span>
+            </div>
+          </div>
+          <button
+            onClick={onRestart}
+            className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors font-medium"
+          >
+            <RefreshCw className="w-4 h-4" />
+            New Search
+          </button>
+        </div>
+      </motion.div>
     </motion.div>
   )
 }
