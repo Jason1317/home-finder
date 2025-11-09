@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MapPin, DollarSign, Star, Home, RefreshCw, Heart, TrendingUp, TrendingDown, Bed, Bath, Maximize, ChevronDown, ChevronUp, ExternalLink, AlertCircle, Sparkles } from 'lucide-react'
 
@@ -33,6 +33,11 @@ const Results = ({ preferences, recommendations, onRestart }) => {
   }, [recommendations])
 
   const [expandedProperty, setExpandedProperty] = useState(null)
+
+  // Stable toggle function to prevent unnecessary re-renders
+  const toggleExpanded = useCallback((propertyId) => {
+    setExpandedProperty(prev => prev === propertyId ? null : propertyId)
+  }, [])
 
   // Format budget string for display
   const formatBudget = (budget) => {
@@ -246,7 +251,8 @@ const Results = ({ preferences, recommendations, onRestart }) => {
   )
 
   // PropertyCard - Main card component that assembles all modular sections
-  const PropertyCard = ({ property, index }) => (
+  // Memoized to prevent re-renders when other cards' expand state changes
+  const PropertyCard = React.memo(({ property, index, isExpanded, onToggle }) => (
     <motion.div
       initial={{ opacity: 0, y: 50, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -261,11 +267,11 @@ const Results = ({ preferences, recommendations, onRestart }) => {
       <PropertyEssentials property={property} />
       <PropertyInsights 
         property={property}
-        isExpanded={expandedProperty === property.uniqueId}
-        onToggle={() => setExpandedProperty(expandedProperty === property.uniqueId ? null : property.uniqueId)}
+        isExpanded={isExpanded}
+        onToggle={onToggle}
       />
     </motion.div>
-  )
+  ))
 
   return (
     <motion.div
@@ -300,7 +306,13 @@ const Results = ({ preferences, recommendations, onRestart }) => {
         {preparedResults.length > 0 ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-12">
             {preparedResults.map((property, index) => (
-              <PropertyCard key={property.uniqueId} property={property} index={index} />
+              <PropertyCard 
+                key={property.uniqueId} 
+                property={property} 
+                index={index}
+                isExpanded={expandedProperty === property.uniqueId}
+                onToggle={() => toggleExpanded(property.uniqueId)}
+              />
             ))}
           </div>
         ) : (
