@@ -21,6 +21,9 @@ export class HomePriceAgent {
 
     // Constructs the full API URL with search parameters.
     const url = `https://zillow-com1.p.rapidapi.com/propertyExtendedSearch?${params.toString()}`
+    console.log('Zillow API URL:', url)
+    console.log('Price filter:', priceRange)
+    
     // Defines the options for the fetch request, including the API key and host headers.
     const options = {
       method: 'GET', // Specifies the HTTP method
@@ -35,8 +38,8 @@ export class HomePriceAgent {
       const response = await fetch(url, options)
       // Parses the JSON response body.
       const data = await response.json()
-      // Returns the transformed data, ready for use in the application.
-      return { type: 'homePrice', data: this._transformResponse(data) }
+      // Returns the transformed data with client-side filtering as backup
+      return { type: 'homePrice', data: this._transformResponse(data, priceRange) }
     } catch (error) {
       // Catches any errors during the API call and logs them.
       console.error('HomePriceAgent error:', error)
@@ -59,11 +62,12 @@ export class HomePriceAgent {
   }
 
   // Helper method to transform the raw API response into a more usable format for the app.
-  _transformResponse(data) {
+  _transformResponse(data, priceRange = {}) {
     // Ensures 'data.props' is an array, defaulting to an empty array if not.
     const propsArray = Array.isArray(data?.props) ? data.props : []
+    
     // Maps each property object to a new, simplified structure.
-    return propsArray.map(prop => {
+    const transformed = propsArray.map(prop => {
       const city = prop?.city || ''
       const state = prop?.state || ''
       const neighborhood = prop?.address || prop?.streetAddress || `${city}, ${state}`.trim()
@@ -79,5 +83,20 @@ export class HomePriceAgent {
         rawData: prop
       }
     })
+    
+    // Client-side filtering as backup if API doesn't respect price filters
+    if (priceRange.min || priceRange.max) {
+      const filtered = transformed.filter(prop => {
+        const price = prop.medianPrice
+        if (priceRange.min && price < priceRange.min) return false
+        if (priceRange.max && price > priceRange.max) return false
+        return true
+      })
+      
+      console.log(`Filtered ${transformed.length} properties to ${filtered.length} within budget range`)
+      return filtered
+    }
+    
+    return transformed
   }
 }
