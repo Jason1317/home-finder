@@ -32,12 +32,6 @@ const Results = ({ preferences, recommendations, onRestart }) => {
     return limited
   }, [recommendations])
 
-  const [expandedProperty, setExpandedProperty] = useState(null)
-
-  // Stable toggle function to prevent unnecessary re-renders
-  const toggleExpanded = useCallback((propertyId) => {
-    setExpandedProperty(prev => prev === propertyId ? null : propertyId)
-  }, [])
 
   // Format budget string for display
   const formatBudget = (budget) => {
@@ -168,21 +162,24 @@ const Results = ({ preferences, recommendations, onRestart }) => {
 
   // PropertyInsights - Expandable insights section
   // Modular container for future agent data (schools, crime, walkability, etc.)
-  const PropertyInsights = ({ property, isExpanded, onToggle }) => (
-    <div className="p-6">
-      <button
-        onClick={onToggle}
-        className="w-full flex items-center justify-between mb-4 hover:bg-gray-50 rounded-lg p-2 transition-colors"
-      >
-        <div className="flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-purple-600" />
-          <h3 className="font-bold text-lg text-gray-900">AI-Powered Insights</h3>
-        </div>
-        {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-      </button>
+  const PropertyInsights = ({ property }) => {
+    const [isExpanded, setIsExpanded] = useState(false)
+    
+    return (
+      <div className="p-6">
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="w-full flex items-center justify-between mb-4 hover:bg-gray-50 rounded-lg p-2 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-purple-600" />
+            <h3 className="font-bold text-lg text-gray-900">AI-Powered Insights</h3>
+          </div>
+          {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+        </button>
 
-      <AnimatePresence>
-        {isExpanded && (
+        <AnimatePresence>
+          {isExpanded && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
@@ -237,22 +234,22 @@ const Results = ({ preferences, recommendations, onRestart }) => {
         )}
       </AnimatePresence>
 
-      {/* View Listing CTA */}
-      <a 
-        href={`https://www.zillow.com/homedetails/${property.rawData?.zpid}_zpid/`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="w-full mt-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg"
-      >
-        <ExternalLink className="w-5 h-5" />
-        View Listing on Zillow
-      </a>
-    </div>
-  )
+        {/* View Listing CTA */}
+        <a 
+          href={`https://www.zillow.com/homedetails/${property.rawData?.zpid}_zpid/`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full mt-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg"
+        >
+          <ExternalLink className="w-5 h-5" />
+          View Listing on Zillow
+        </a>
+      </div>
+    )
+  }
 
   // PropertyCard - Main card component that assembles all modular sections
-  // Memoized to prevent re-renders when other cards' expand state changes
-  const PropertyCard = React.memo(({ property, index, isExpanded, onToggle }) => (
+  const PropertyCard = ({ property, index }) => (
     <motion.div
       initial={{ opacity: 0, y: 50, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -265,13 +262,9 @@ const Results = ({ preferences, recommendations, onRestart }) => {
     >
       <PropertyHero property={property} />
       <PropertyEssentials property={property} />
-      <PropertyInsights 
-        property={property}
-        isExpanded={isExpanded}
-        onToggle={onToggle}
-      />
+      <PropertyInsights property={property} />
     </motion.div>
-  ))
+  )
 
   return (
     <motion.div
@@ -310,8 +303,6 @@ const Results = ({ preferences, recommendations, onRestart }) => {
                 key={property.uniqueId} 
                 property={property} 
                 index={index}
-                isExpanded={expandedProperty === property.uniqueId}
-                onToggle={() => toggleExpanded(property.uniqueId)}
               />
             ))}
           </div>
