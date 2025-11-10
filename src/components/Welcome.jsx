@@ -228,7 +228,7 @@ const Welcome = ({ onStart, sessionId }) => {
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              <div className="text-3xl font-bold text-purple-600 mb-2">&lt; 5 sec</div>
+              <div className="text-3xl font-bold text-purple-600 mb-2">&lt;5 sec</div>
               <div className="text-gray-600">Response Time</div>
             </motion.div>
           </div>
