@@ -36,9 +36,21 @@ const Welcome = ({ onStart, sessionId }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen flex items-center justify-center p-4"
+      className="min-h-screen flex flex-col p-4"
     >
-      <div className="max-w-6xl mx-auto">
+      {/* Header with brand name */}
+      <motion.div
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="absolute top-6 left-6"
+      >
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          TheNextDoor
+        </h2>
+      </motion.div>
+
+      <div className="max-w-6xl mx-auto flex-1 flex items-center justify-center w-full">
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -132,6 +144,23 @@ const Welcome = ({ onStart, sessionId }) => {
           </div>
         </motion.div>
       </div>
+
+      {/* Footer */}
+      <motion.footer
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.8 }}
+        className="mt-auto py-6 text-center"
+      >
+        <div className="max-w-4xl mx-auto px-4">
+          <p className="text-sm text-gray-500 mb-2">
+            TheNextDoor is an AI-powered real estate discovery platform connecting home seekers with their ideal neighborhoods across the United States.
+          </p>
+          <p className="text-xs text-gray-400">
+            © 2025 TheNextDoor. Property data sourced from leading real estate providers. All rights reserved.
+          </p>
+        </div>
+      </motion.footer>
     </motion.div>
   )
 }
