@@ -744,16 +744,14 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
     }));
   };
 
-  // Once all answers have bene collected
+  // Once all answers have been collected
   /*
-  * {
-  * experience: 'first-time',
-  * budget: '200k-400k',
-  * lifestyle: ['schools', 'safety', 'restaurants'],
-  * dealbreakers: ['high-crime', 'long-commute'],
-  * location: 'Columbus, Ohio'
-  * }
-  */
+   *   experience: 'first-time',
+   *   budget: '200k-400k',
+   *   lifestyle: ['schools', 'safety', 'restaurants'],
+   *   dealbreakers: ['high-crime', 'long-commute'],
+   *   location: 'Columbus, Ohio'
+   */
   const handleNext = () => {
     if (isLastQuestion) {
       onComplete(answers);
