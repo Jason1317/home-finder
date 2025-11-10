@@ -4,17 +4,19 @@ import { Home, MapPin, Heart, Star, ChevronRight, Search, Users, Building } from
 import houseGif from '../assets/house.gif';
 
 const Welcome = ({ onStart, sessionId }) => {
-  // Log when user views the welcome page
+  // Log when user views the welcome page (only in development mode)
   useEffect(() => {
-    const timestamp = new Date().toISOString();
-    console.log('[TELEMETRY] [USER_VIEWED_SITE]', {
-      sessionId,
-      timestamp,
-      eventType: 'USER_VIEWED_SITE',
-      page: 'welcome',
-      referrer: document.referrer || 'direct',
-      viewportSize: `${window.innerWidth}x${window.innerHeight}`
-    });
+    if (import.meta.env.DEV) {
+      const timestamp = new Date().toISOString();
+      console.log('[TELEMETRY] [USER_VIEWED_SITE]', {
+        sessionId,
+        timestamp,
+        eventType: 'USER_VIEWED_SITE',
+        page: 'welcome',
+        referrer: document.referrer || 'direct',
+        viewportSize: `${window.innerWidth}x${window.innerHeight}`
+      });
+    }
   }, [sessionId]);
   // Feature cards data - highlights key value propositions
   const features = [

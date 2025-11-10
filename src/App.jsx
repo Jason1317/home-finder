@@ -12,7 +12,7 @@ const generateSessionId = () => {
   return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 };
 
-// Telemetry logger utility
+// Telemetry logger utility - only logs in development mode
 const logTelemetry = (sessionId, eventType, data = {}) => {
   const timestamp = new Date().toISOString();
   const logEntry = {
@@ -22,7 +22,15 @@ const logTelemetry = (sessionId, eventType, data = {}) => {
     ...data
   };
   
-  console.log(`[TELEMETRY] [${eventType}]`, logEntry);
+  // Only log to console in development mode
+  // In production, this could be sent to a backend analytics service
+  if (import.meta.env.DEV) {
+    console.log(`[TELEMETRY] [${eventType}]`, logEntry);
+  }
+  
+  // TODO: In production, send to backend logging endpoint
+  // Example: await fetch('/api/telemetry', { method: 'POST', body: JSON.stringify(logEntry) })
+  
   return logEntry;
 };
 
