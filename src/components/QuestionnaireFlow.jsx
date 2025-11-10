@@ -1,210 +1,785 @@
-import React, { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronRight, ChevronLeft, DollarSign, MapPin, Users, Car, Coffee, GraduationCap, Shield, Moon, Heart, Home, Briefcase, Loader } from 'lucide-react'
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ChevronRight,
+  ChevronLeft,
+  DollarSign,
+  MapPin,
+  Users,
+  Car,
+  Coffee,
+  GraduationCap,
+  Shield,
+  Moon,
+  Heart,
+  Home,
+  Briefcase,
+  Loader,
+} from "lucide-react";
 
 const QuestionnaireFlow = ({ onComplete, isLoading }) => {
-  const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [answers, setAnswers] = useState({})
-  const [selectedState, setSelectedState] = useState('')
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState({});
+  const [selectedState, setSelectedState] = useState("");
 
   // State and city data for location dropdown
   // Contains all 50 US states with popular cities for each
   const locationData = {
-    'Alabama': ['Birmingham', 'Montgomery', 'Mobile', 'Huntsville', 'Tuscaloosa', 'Hoover', 'Dothan', 'Auburn'],
-    'Alaska': ['Anchorage', 'Fairbanks', 'Juneau', 'Sitka', 'Ketchikan', 'Wasilla', 'Kenai', 'Kodiak'],
-    'Arizona': ['Phoenix', 'Tucson', 'Mesa', 'Chandler', 'Scottsdale', 'Glendale', 'Gilbert', 'Tempe'],
-    'Arkansas': ['Little Rock', 'Fort Smith', 'Fayetteville', 'Springdale', 'Jonesboro', 'North Little Rock', 'Conway', 'Rogers'],
-    'California': ['Los Angeles', 'San Francisco', 'San Diego', 'San Jose', 'Sacramento', 'Oakland', 'Fresno', 'Long Beach'],
-    'Colorado': ['Denver', 'Colorado Springs', 'Aurora', 'Fort Collins', 'Lakewood', 'Thornton', 'Arvada', 'Boulder'],
-    'Connecticut': ['Bridgeport', 'New Haven', 'Hartford', 'Stamford', 'Waterbury', 'Norwalk', 'Danbury', 'New Britain'],
-    'Delaware': ['Wilmington', 'Dover', 'Newark', 'Middletown', 'Smyrna', 'Milford', 'Seaford', 'Georgetown'],
-    'Florida': ['Jacksonville', 'Miami', 'Tampa', 'Orlando', 'St. Petersburg', 'Tallahassee', 'Fort Lauderdale', 'Gainesville'],
-    'Georgia': ['Atlanta', 'Augusta', 'Columbus', 'Macon', 'Savannah', 'Athens', 'Sandy Springs', 'Roswell'],
-    'Hawaii': ['Honolulu', 'Pearl City', 'Hilo', 'Kailua', 'Waipahu', 'Kaneohe', 'Mililani', 'Kahului'],
-    'Idaho': ['Boise', 'Meridian', 'Nampa', 'Idaho Falls', 'Pocatello', 'Caldwell', 'Coeur d\'Alene', 'Twin Falls'],
-    'Illinois': ['Chicago', 'Aurora', 'Naperville', 'Joliet', 'Rockford', 'Springfield', 'Peoria', 'Elgin'],
-    'Indiana': ['Indianapolis', 'Fort Wayne', 'Evansville', 'South Bend', 'Carmel', 'Bloomington', 'Fishers', 'Hammond'],
-    'Iowa': ['Des Moines', 'Cedar Rapids', 'Davenport', 'Sioux City', 'Iowa City', 'Waterloo', 'Council Bluffs', 'Ames'],
-    'Kansas': ['Wichita', 'Overland Park', 'Kansas City', 'Olathe', 'Topeka', 'Lawrence', 'Shawnee', 'Manhattan'],
-    'Kentucky': ['Louisville', 'Lexington', 'Bowling Green', 'Owensboro', 'Covington', 'Hopkinsville', 'Richmond', 'Florence'],
-    'Louisiana': ['New Orleans', 'Baton Rouge', 'Shreveport', 'Lafayette', 'Lake Charles', 'Kenner', 'Bossier City', 'Monroe'],
-    'Maine': ['Portland', 'Lewiston', 'Bangor', 'South Portland', 'Auburn', 'Biddeford', 'Sanford', 'Augusta'],
-    'Maryland': ['Baltimore', 'Frederick', 'Rockville', 'Gaithersburg', 'Bowie', 'Hagerstown', 'Annapolis', 'College Park'],
-    'Massachusetts': ['Boston', 'Worcester', 'Springfield', 'Cambridge', 'Lowell', 'Brockton', 'Quincy', 'Lynn'],
-    'Michigan': ['Detroit', 'Grand Rapids', 'Warren', 'Sterling Heights', 'Ann Arbor', 'Lansing', 'Flint', 'Dearborn'],
-    'Minnesota': ['Minneapolis', 'St. Paul', 'Rochester', 'Duluth', 'Bloomington', 'Brooklyn Park', 'Plymouth', 'St. Cloud'],
-    'Mississippi': ['Jackson', 'Gulfport', 'Southaven', 'Hattiesburg', 'Biloxi', 'Meridian', 'Tupelo', 'Greenville'],
-    'Missouri': ['Kansas City', 'St. Louis', 'Springfield', 'Columbia', 'Independence', 'Lee\'s Summit', 'O\'Fallon', 'St. Joseph'],
-    'Montana': ['Billings', 'Missoula', 'Great Falls', 'Bozeman', 'Butte', 'Helena', 'Kalispell', 'Havre'],
-    'Nebraska': ['Omaha', 'Lincoln', 'Bellevue', 'Grand Island', 'Kearney', 'Fremont', 'Hastings', 'North Platte'],
-    'Nevada': ['Las Vegas', 'Henderson', 'Reno', 'North Las Vegas', 'Sparks', 'Carson City', 'Fernley', 'Elko'],
-    'New Hampshire': ['Manchester', 'Nashua', 'Concord', 'Derry', 'Dover', 'Rochester', 'Salem', 'Merrimack'],
-    'New Jersey': ['Newark', 'Jersey City', 'Paterson', 'Elizabeth', 'Edison', 'Woodbridge', 'Lakewood', 'Toms River'],
-    'New Mexico': ['Albuquerque', 'Las Cruces', 'Rio Rancho', 'Santa Fe', 'Roswell', 'Farmington', 'Clovis', 'Hobbs'],
-    'New York': ['New York City', 'Buffalo', 'Rochester', 'Albany', 'Syracuse', 'Yonkers', 'White Plains', 'Ithaca'],
-    'North Carolina': ['Charlotte', 'Raleigh', 'Greensboro', 'Durham', 'Winston-Salem', 'Fayetteville', 'Cary', 'Wilmington'],
-    'North Dakota': ['Fargo', 'Bismarck', 'Grand Forks', 'Minot', 'West Fargo', 'Williston', 'Dickinson', 'Mandan'],
-    'Ohio': ['Columbus', 'Cleveland', 'Cincinnati', 'Toledo', 'Akron', 'Dayton', 'Parma', 'Canton'],
-    'Oklahoma': ['Oklahoma City', 'Tulsa', 'Norman', 'Broken Arrow', 'Edmond', 'Lawton', 'Moore', 'Midwest City'],
-    'Oregon': ['Portland', 'Salem', 'Eugene', 'Gresham', 'Hillsboro', 'Beaverton', 'Bend', 'Medford'],
-    'Pennsylvania': ['Philadelphia', 'Pittsburgh', 'Allentown', 'Erie', 'Reading', 'Scranton', 'Bethlehem', 'Lancaster'],
-    'Rhode Island': ['Providence', 'Warwick', 'Cranston', 'Pawtucket', 'East Providence', 'Woonsocket', 'Coventry', 'Cumberland'],
-    'South Carolina': ['Charleston', 'Columbia', 'North Charleston', 'Mount Pleasant', 'Rock Hill', 'Greenville', 'Summerville', 'Spartanburg'],
-    'South Dakota': ['Sioux Falls', 'Rapid City', 'Aberdeen', 'Brookings', 'Watertown', 'Mitchell', 'Yankton', 'Pierre'],
-    'Tennessee': ['Nashville', 'Memphis', 'Knoxville', 'Chattanooga', 'Clarksville', 'Murfreesboro', 'Franklin', 'Jackson'],
-    'Texas': ['Houston', 'San Antonio', 'Dallas', 'Austin', 'Fort Worth', 'El Paso', 'Arlington', 'Corpus Christi'],
-    'Utah': ['Salt Lake City', 'West Valley City', 'Provo', 'West Jordan', 'Orem', 'Sandy', 'Ogden', 'St. George'],
-    'Vermont': ['Burlington', 'South Burlington', 'Rutland', 'Essex', 'Colchester', 'Bennington', 'Brattleboro', 'Milton'],
-    'Virginia': ['Virginia Beach', 'Norfolk', 'Chesapeake', 'Richmond', 'Newport News', 'Alexandria', 'Hampton', 'Roanoke'],
-    'Washington': ['Seattle', 'Spokane', 'Tacoma', 'Vancouver', 'Bellevue', 'Everett', 'Kent', 'Renton'],
-    'West Virginia': ['Charleston', 'Huntington', 'Morgantown', 'Parkersburg', 'Wheeling', 'Weirton', 'Fairmont', 'Beckley'],
-    'Wisconsin': ['Milwaukee', 'Madison', 'Green Bay', 'Kenosha', 'Racine', 'Appleton', 'Waukesha', 'Eau Claire'],
-    'Wyoming': ['Cheyenne', 'Casper', 'Laramie', 'Gillette', 'Rock Springs', 'Sheridan', 'Green River', 'Evanston']
-  }
+    Alabama: [
+      "Birmingham",
+      "Montgomery",
+      "Mobile",
+      "Huntsville",
+      "Tuscaloosa",
+      "Hoover",
+      "Dothan",
+      "Auburn",
+    ],
+    Alaska: [
+      "Anchorage",
+      "Fairbanks",
+      "Juneau",
+      "Sitka",
+      "Ketchikan",
+      "Wasilla",
+      "Kenai",
+      "Kodiak",
+    ],
+    Arizona: [
+      "Phoenix",
+      "Tucson",
+      "Mesa",
+      "Chandler",
+      "Scottsdale",
+      "Glendale",
+      "Gilbert",
+      "Tempe",
+    ],
+    Arkansas: [
+      "Little Rock",
+      "Fort Smith",
+      "Fayetteville",
+      "Springdale",
+      "Jonesboro",
+      "North Little Rock",
+      "Conway",
+      "Rogers",
+    ],
+    California: [
+      "Los Angeles",
+      "San Francisco",
+      "San Diego",
+      "San Jose",
+      "Sacramento",
+      "Oakland",
+      "Fresno",
+      "Long Beach",
+    ],
+    Colorado: [
+      "Denver",
+      "Colorado Springs",
+      "Aurora",
+      "Fort Collins",
+      "Lakewood",
+      "Thornton",
+      "Arvada",
+      "Boulder",
+    ],
+    Connecticut: [
+      "Bridgeport",
+      "New Haven",
+      "Hartford",
+      "Stamford",
+      "Waterbury",
+      "Norwalk",
+      "Danbury",
+      "New Britain",
+    ],
+    Delaware: [
+      "Wilmington",
+      "Dover",
+      "Newark",
+      "Middletown",
+      "Smyrna",
+      "Milford",
+      "Seaford",
+      "Georgetown",
+    ],
+    Florida: [
+      "Jacksonville",
+      "Miami",
+      "Tampa",
+      "Orlando",
+      "St. Petersburg",
+      "Tallahassee",
+      "Fort Lauderdale",
+      "Gainesville",
+    ],
+    Georgia: [
+      "Atlanta",
+      "Augusta",
+      "Columbus",
+      "Macon",
+      "Savannah",
+      "Athens",
+      "Sandy Springs",
+      "Roswell",
+    ],
+    Hawaii: [
+      "Honolulu",
+      "Pearl City",
+      "Hilo",
+      "Kailua",
+      "Waipahu",
+      "Kaneohe",
+      "Mililani",
+      "Kahului",
+    ],
+    Idaho: [
+      "Boise",
+      "Meridian",
+      "Nampa",
+      "Idaho Falls",
+      "Pocatello",
+      "Caldwell",
+      "Coeur d'Alene",
+      "Twin Falls",
+    ],
+    Illinois: [
+      "Chicago",
+      "Aurora",
+      "Naperville",
+      "Joliet",
+      "Rockford",
+      "Springfield",
+      "Peoria",
+      "Elgin",
+    ],
+    Indiana: [
+      "Indianapolis",
+      "Fort Wayne",
+      "Evansville",
+      "South Bend",
+      "Carmel",
+      "Bloomington",
+      "Fishers",
+      "Hammond",
+    ],
+    Iowa: [
+      "Des Moines",
+      "Cedar Rapids",
+      "Davenport",
+      "Sioux City",
+      "Iowa City",
+      "Waterloo",
+      "Council Bluffs",
+      "Ames",
+    ],
+    Kansas: [
+      "Wichita",
+      "Overland Park",
+      "Kansas City",
+      "Olathe",
+      "Topeka",
+      "Lawrence",
+      "Shawnee",
+      "Manhattan",
+    ],
+    Kentucky: [
+      "Louisville",
+      "Lexington",
+      "Bowling Green",
+      "Owensboro",
+      "Covington",
+      "Hopkinsville",
+      "Richmond",
+      "Florence",
+    ],
+    Louisiana: [
+      "New Orleans",
+      "Baton Rouge",
+      "Shreveport",
+      "Lafayette",
+      "Lake Charles",
+      "Kenner",
+      "Bossier City",
+      "Monroe",
+    ],
+    Maine: [
+      "Portland",
+      "Lewiston",
+      "Bangor",
+      "South Portland",
+      "Auburn",
+      "Biddeford",
+      "Sanford",
+      "Augusta",
+    ],
+    Maryland: [
+      "Baltimore",
+      "Frederick",
+      "Rockville",
+      "Gaithersburg",
+      "Bowie",
+      "Hagerstown",
+      "Annapolis",
+      "College Park",
+    ],
+    Massachusetts: [
+      "Boston",
+      "Worcester",
+      "Springfield",
+      "Cambridge",
+      "Lowell",
+      "Brockton",
+      "Quincy",
+      "Lynn",
+    ],
+    Michigan: [
+      "Detroit",
+      "Grand Rapids",
+      "Warren",
+      "Sterling Heights",
+      "Ann Arbor",
+      "Lansing",
+      "Flint",
+      "Dearborn",
+    ],
+    Minnesota: [
+      "Minneapolis",
+      "St. Paul",
+      "Rochester",
+      "Duluth",
+      "Bloomington",
+      "Brooklyn Park",
+      "Plymouth",
+      "St. Cloud",
+    ],
+    Mississippi: [
+      "Jackson",
+      "Gulfport",
+      "Southaven",
+      "Hattiesburg",
+      "Biloxi",
+      "Meridian",
+      "Tupelo",
+      "Greenville",
+    ],
+    Missouri: [
+      "Kansas City",
+      "St. Louis",
+      "Springfield",
+      "Columbia",
+      "Independence",
+      "Lee's Summit",
+      "O'Fallon",
+      "St. Joseph",
+    ],
+    Montana: [
+      "Billings",
+      "Missoula",
+      "Great Falls",
+      "Bozeman",
+      "Butte",
+      "Helena",
+      "Kalispell",
+      "Havre",
+    ],
+    Nebraska: [
+      "Omaha",
+      "Lincoln",
+      "Bellevue",
+      "Grand Island",
+      "Kearney",
+      "Fremont",
+      "Hastings",
+      "North Platte",
+    ],
+    Nevada: [
+      "Las Vegas",
+      "Henderson",
+      "Reno",
+      "North Las Vegas",
+      "Sparks",
+      "Carson City",
+      "Fernley",
+      "Elko",
+    ],
+    "New Hampshire": [
+      "Manchester",
+      "Nashua",
+      "Concord",
+      "Derry",
+      "Dover",
+      "Rochester",
+      "Salem",
+      "Merrimack",
+    ],
+    "New Jersey": [
+      "Newark",
+      "Jersey City",
+      "Paterson",
+      "Elizabeth",
+      "Edison",
+      "Woodbridge",
+      "Lakewood",
+      "Toms River",
+    ],
+    "New Mexico": [
+      "Albuquerque",
+      "Las Cruces",
+      "Rio Rancho",
+      "Santa Fe",
+      "Roswell",
+      "Farmington",
+      "Clovis",
+      "Hobbs",
+    ],
+    "New York": [
+      "New York City",
+      "Buffalo",
+      "Rochester",
+      "Albany",
+      "Syracuse",
+      "Yonkers",
+      "White Plains",
+      "Ithaca",
+    ],
+    "North Carolina": [
+      "Charlotte",
+      "Raleigh",
+      "Greensboro",
+      "Durham",
+      "Winston-Salem",
+      "Fayetteville",
+      "Cary",
+      "Wilmington",
+    ],
+    "North Dakota": [
+      "Fargo",
+      "Bismarck",
+      "Grand Forks",
+      "Minot",
+      "West Fargo",
+      "Williston",
+      "Dickinson",
+      "Mandan",
+    ],
+    Ohio: [
+      "Columbus",
+      "Cleveland",
+      "Cincinnati",
+      "Toledo",
+      "Akron",
+      "Dayton",
+      "Parma",
+      "Canton",
+    ],
+    Oklahoma: [
+      "Oklahoma City",
+      "Tulsa",
+      "Norman",
+      "Broken Arrow",
+      "Edmond",
+      "Lawton",
+      "Moore",
+      "Midwest City",
+    ],
+    Oregon: [
+      "Portland",
+      "Salem",
+      "Eugene",
+      "Gresham",
+      "Hillsboro",
+      "Beaverton",
+      "Bend",
+      "Medford",
+    ],
+    Pennsylvania: [
+      "Philadelphia",
+      "Pittsburgh",
+      "Allentown",
+      "Erie",
+      "Reading",
+      "Scranton",
+      "Bethlehem",
+      "Lancaster",
+    ],
+    "Rhode Island": [
+      "Providence",
+      "Warwick",
+      "Cranston",
+      "Pawtucket",
+      "East Providence",
+      "Woonsocket",
+      "Coventry",
+      "Cumberland",
+    ],
+    "South Carolina": [
+      "Charleston",
+      "Columbia",
+      "North Charleston",
+      "Mount Pleasant",
+      "Rock Hill",
+      "Greenville",
+      "Summerville",
+      "Spartanburg",
+    ],
+    "South Dakota": [
+      "Sioux Falls",
+      "Rapid City",
+      "Aberdeen",
+      "Brookings",
+      "Watertown",
+      "Mitchell",
+      "Yankton",
+      "Pierre",
+    ],
+    Tennessee: [
+      "Nashville",
+      "Memphis",
+      "Knoxville",
+      "Chattanooga",
+      "Clarksville",
+      "Murfreesboro",
+      "Franklin",
+      "Jackson",
+    ],
+    Texas: [
+      "Houston",
+      "San Antonio",
+      "Dallas",
+      "Austin",
+      "Fort Worth",
+      "El Paso",
+      "Arlington",
+      "Corpus Christi",
+    ],
+    Utah: [
+      "Salt Lake City",
+      "West Valley City",
+      "Provo",
+      "West Jordan",
+      "Orem",
+      "Sandy",
+      "Ogden",
+      "St. George",
+    ],
+    Vermont: [
+      "Burlington",
+      "South Burlington",
+      "Rutland",
+      "Essex",
+      "Colchester",
+      "Bennington",
+      "Brattleboro",
+      "Milton",
+    ],
+    Virginia: [
+      "Virginia Beach",
+      "Norfolk",
+      "Chesapeake",
+      "Richmond",
+      "Newport News",
+      "Alexandria",
+      "Hampton",
+      "Roanoke",
+    ],
+    Washington: [
+      "Seattle",
+      "Spokane",
+      "Tacoma",
+      "Vancouver",
+      "Bellevue",
+      "Everett",
+      "Kent",
+      "Renton",
+    ],
+    "West Virginia": [
+      "Charleston",
+      "Huntington",
+      "Morgantown",
+      "Parkersburg",
+      "Wheeling",
+      "Weirton",
+      "Fairmont",
+      "Beckley",
+    ],
+    Wisconsin: [
+      "Milwaukee",
+      "Madison",
+      "Green Bay",
+      "Kenosha",
+      "Racine",
+      "Appleton",
+      "Waukesha",
+      "Eau Claire",
+    ],
+    Wyoming: [
+      "Cheyenne",
+      "Casper",
+      "Laramie",
+      "Gillette",
+      "Rock Springs",
+      "Sheridan",
+      "Green River",
+      "Evanston",
+    ],
+  };
 
   // Core questionnaire data - defines all questions, options, and validation rules
   // Each question has: id (key for answers object), type (single/multiple/text), and options
   const questions = [
     {
-      id: 'experience',
+      id: "experience",
       title: "What's your home buying experience?",
       subtitle: "This helps us tailor our recommendations",
-      type: 'single',
+      type: "single",
       options: [
-        { value: 'first-time', label: 'First-time buyer', icon: <Home className="w-6 h-6" />, description: 'New to the home buying process' },
-        { value: 'experienced', label: 'Experienced buyer', icon: <Briefcase className="w-6 h-6" />, description: 'Bought homes before' },
-        { value: 'investor', label: 'Investor', icon: <DollarSign className="w-6 h-6" />, description: 'Looking for investment properties' }
-      ]
+        {
+          value: "first-time",
+          label: "First-time buyer",
+          icon: <Home className="w-6 h-6" />,
+          description: "New to the home buying process",
+        },
+        {
+          value: "experienced",
+          label: "Experienced buyer",
+          icon: <Briefcase className="w-6 h-6" />,
+          description: "Bought homes before",
+        },
+        {
+          value: "investor",
+          label: "Investor",
+          icon: <DollarSign className="w-6 h-6" />,
+          description: "Looking for investment properties",
+        },
+      ],
     },
     {
-      id: 'budget',
+      id: "budget",
       title: "What's your budget range?",
       subtitle: "We'll find options that fit your financial comfort zone",
-      type: 'single',
+      type: "single",
       options: [
-        { value: 'under-200k', label: 'Under $200K', icon: <DollarSign className="w-6 h-6" />, description: 'Starter homes and condos' },
-        { value: '200k-400k', label: '$200K - $400K', icon: <DollarSign className="w-6 h-6" />, description: 'Mid-range family homes' },
-        { value: '400k-600k', label: '$400K - $600K', icon: <DollarSign className="w-6 h-6" />, description: 'Premium properties' },
-        { value: '600k-1m', label: '$600K - $1M', icon: <DollarSign className="w-6 h-6" />, description: 'Luxury homes' },
-        { value: 'over-1m', label: 'Over $1M', icon: <DollarSign className="w-6 h-6" />, description: 'High-end luxury' }
-      ]
+        {
+          value: "under-200k",
+          label: "Under $200K",
+          icon: <DollarSign className="w-6 h-6" />,
+          description: "Starter homes and condos",
+        },
+        {
+          value: "200k-400k",
+          label: "$200K - $400K",
+          icon: <DollarSign className="w-6 h-6" />,
+          description: "Mid-range family homes",
+        },
+        {
+          value: "400k-600k",
+          label: "$400K - $600K",
+          icon: <DollarSign className="w-6 h-6" />,
+          description: "Premium properties",
+        },
+        {
+          value: "600k-1m",
+          label: "$600K - $1M",
+          icon: <DollarSign className="w-6 h-6" />,
+          description: "Luxury homes",
+        },
+        {
+          value: "over-1m",
+          label: "Over $1M",
+          icon: <DollarSign className="w-6 h-6" />,
+          description: "High-end luxury",
+        },
+      ],
     },
     {
-      id: 'lifestyle',
+      id: "lifestyle",
       title: "What's most important to you?",
       subtitle: "Select your top 3 priorities",
-      type: 'multiple',
+      type: "multiple",
       maxSelections: 3,
       options: [
-        { value: 'schools', label: 'Great Schools', icon: <GraduationCap className="w-6 h-6" />, description: 'Top-rated education' },
-        { value: 'safety', label: 'Safety & Security', icon: <Shield className="w-6 h-6" />, description: 'Low crime rates' },
-        { value: 'nightlife', label: 'Nightlife & Entertainment', icon: <Moon className="w-6 h-6" />, description: 'Bars, clubs, events' },
-        { value: 'restaurants', label: 'Dining Scene', icon: <Coffee className="w-6 h-6" />, description: 'Great food options' },
-        { value: 'commute', label: 'Easy Commute', icon: <Car className="w-6 h-6" />, description: 'Short travel times' },
-        { value: 'family', label: 'Family-Friendly', icon: <Users className="w-6 h-6" />, description: 'Values family life and activities' }
-      ]
+        {
+          value: "schools",
+          label: "Great Schools",
+          icon: <GraduationCap className="w-6 h-6" />,
+          description: "Top-rated education",
+        },
+        {
+          value: "safety",
+          label: "Safety & Security",
+          icon: <Shield className="w-6 h-6" />,
+          description: "Low crime rates",
+        },
+        {
+          value: "nightlife",
+          label: "Nightlife & Entertainment",
+          icon: <Moon className="w-6 h-6" />,
+          description: "Bars, clubs, events",
+        },
+        {
+          value: "restaurants",
+          label: "Dining Scene",
+          icon: <Coffee className="w-6 h-6" />,
+          description: "Great food options",
+        },
+        {
+          value: "commute",
+          label: "Easy Commute",
+          icon: <Car className="w-6 h-6" />,
+          description: "Short travel times",
+        },
+        {
+          value: "family",
+          label: "Family-Friendly",
+          icon: <Users className="w-6 h-6" />,
+          description: "Values family life and activities",
+        },
+      ],
     },
     {
-      id: 'dealbreakers',
+      id: "dealbreakers",
       title: "What are your deal breakers?",
       subtitle: "Things you absolutely want to avoid",
-      type: 'multiple',
+      type: "multiple",
       maxSelections: 5,
       options: [
-        { value: 'high-crime', label: 'High Crime Rate', icon: <Shield className="w-6 h-6" />, description: 'Safety concerns' },
-        { value: 'poor-schools', label: 'Poor School Districts', icon: <GraduationCap className="w-6 h-6" />, description: 'Low-rated education' },
-        { value: 'long-commute', label: 'Long Commute', icon: <Car className="w-6 h-6" />, description: 'Over 45 minutes' },
-        { value: 'no-nightlife', label: 'Limited Nightlife', icon: <Moon className="w-6 h-6" />, description: 'Quiet evenings only' },
-        { value: 'expensive', label: 'High Cost of Living', icon: <DollarSign className="w-6 h-6" />, description: 'Above budget lifestyle' },
-        { value: 'isolated', label: 'Too Rural/Isolated', icon: <MapPin className="w-6 h-6" />, description: 'Far from amenities' }
-      ]
+        {
+          value: "high-crime",
+          label: "High Crime Rate",
+          icon: <Shield className="w-6 h-6" />,
+          description: "Safety concerns",
+        },
+        {
+          value: "poor-schools",
+          label: "Poor School Districts",
+          icon: <GraduationCap className="w-6 h-6" />,
+          description: "Low-rated education",
+        },
+        {
+          value: "long-commute",
+          label: "Long Commute",
+          icon: <Car className="w-6 h-6" />,
+          description: "Over 45 minutes",
+        },
+        {
+          value: "no-nightlife",
+          label: "Limited Nightlife",
+          icon: <Moon className="w-6 h-6" />,
+          description: "Quiet evenings only",
+        },
+        {
+          value: "expensive",
+          label: "High Cost of Living",
+          icon: <DollarSign className="w-6 h-6" />,
+          description: "Above budget lifestyle",
+        },
+        {
+          value: "isolated",
+          label: "Too Rural/Isolated",
+          icon: <MapPin className="w-6 h-6" />,
+          description: "Far from amenities",
+        },
+      ],
     },
     {
-      id: 'location',
+      id: "location",
       title: "Where are you looking to buy?",
       subtitle: "Select a state and city to find your perfect home",
-      type: 'cascading'
-    }
-  ]
+      type: "cascading",
+    },
+  ];
 
-  const currentQ = questions[currentQuestion]
-  const isLastQuestion = currentQuestion === questions.length - 1
+  const currentQ = questions[currentQuestion];
+  const isLastQuestion = currentQuestion === questions.length - 1;
 
   // Handles answer changes for both single-select and multiple-select questions
   // For multiple-select: toggles selection and enforces maxSelections limit
   const handleAnswerChange = (questionId, value) => {
-    console.log('Answer changed:', questionId, value);
-    const question = questions.find(q => q.id === questionId)
-    
-    if (question.type === 'multiple') {
-      const currentAnswers = answers[questionId] || []
-      const maxSelections = question.maxSelections || Infinity
-      
+    console.log("Answer changed:", questionId, value);
+    const question = questions.find((q) => q.id === questionId);
+
+    if (question.type === "multiple") {
+      const currentAnswers = answers[questionId] || [];
+      const maxSelections = question.maxSelections || Infinity;
+
       if (currentAnswers.includes(value)) {
-        setAnswers(prev => ({
+        setAnswers((prev) => ({
           ...prev,
-          [questionId]: currentAnswers.filter(v => v !== value)
-        }))
+          [questionId]: currentAnswers.filter((v) => v !== value),
+        }));
       } else if (currentAnswers.length < maxSelections) {
-        setAnswers(prev => ({
+        setAnswers((prev) => ({
           ...prev,
-          [questionId]: [...currentAnswers, value]
-        }))
+          [questionId]: [...currentAnswers, value],
+        }));
       }
     } else {
-      setAnswers(prev => ({
+      setAnswers((prev) => ({
         ...prev,
-        [questionId]: value
-      }))
+        [questionId]: value,
+      }));
     }
-  }
+  };
 
   // Handles state selection for cascading location dropdown
   // Resets city selection when state changes
   const handleStateChange = (state) => {
-    setSelectedState(state)
+    setSelectedState(state);
     // Reset city when state changes
-    setAnswers(prev => ({
+    setAnswers((prev) => ({
       ...prev,
-      location: ''
-    }))
-  }
+      location: "",
+    }));
+  };
 
   // Handles city selection for cascading location dropdown
   const handleCityChange = (city) => {
-    const state = selectedState || answers.location?.split(', ')[1]
-    setAnswers(prev => ({
+    const state = selectedState || answers.location?.split(", ")[1];
+    setAnswers((prev) => ({
       ...prev,
-      location: `${city}, ${state}`
-    }))
-  }
+      location: `${city}, ${state}`,
+    }));
+  };
 
+  // Once all answers have bene collected
+  /*
+  * {
+  * experience: 'first-time',
+  * budget: '200k-400k',
+  * lifestyle: ['schools', 'safety', 'restaurants'],
+  * dealbreakers: ['high-crime', 'long-commute'],
+  * location: 'Columbus, Ohio'
+  * }
+  */
   const handleNext = () => {
     if (isLastQuestion) {
-      onComplete(answers)
+      onComplete(answers);
     } else {
-      setCurrentQuestion(prev => prev + 1)
+      setCurrentQuestion((prev) => prev + 1);
     }
-  }
+  };
 
   const handleBack = () => {
-    setCurrentQuestion(prev => Math.max(0, prev - 1))
-  }
+    setCurrentQuestion((prev) => Math.max(0, prev - 1));
+  };
 
   // Validates if user has answered current question before allowing proceed
   // Different validation rules for multiple-select, text, cascading, and single-select
   const canProceed = () => {
-    const answer = answers[currentQ.id]
-    
-    if (currentQ.type === 'multiple') {
-      return answer && answer.length > 0
-    } else if (currentQ.type === 'text') {
-      return answer && answer.trim().length > 0
-    } else if (currentQ.type === 'cascading') {
-      return answer && answer.trim().length > 0 && selectedState
+    const answer = answers[currentQ.id];
+
+    if (currentQ.type === "multiple") {
+      return answer && answer.length > 0;
+    } else if (currentQ.type === "text") {
+      return answer && answer.trim().length > 0;
+    } else if (currentQ.type === "cascading") {
+      return answer && answer.trim().length > 0 && selectedState;
     }
-    return answer !== undefined
-  }
+    return answer !== undefined;
+  };
 
   // Loading state - shown while fetching recommendations from API
   if (isLoading) {
@@ -220,13 +795,16 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
             className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-6"
           />
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Finding Your Perfect Matches</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            Finding Your Perfect Matches
+          </h2>
           <p className="text-gray-600 max-w-md mx-auto">
-            Our AI is analyzing thousands of neighborhoods across the country to find options that match your preferences...
+            Our AI is analyzing thousands of neighborhoods across the country to
+            find options that match your preferences...
           </p>
         </div>
       </motion.div>
-    )
+    );
   }
 
   return (
@@ -240,13 +818,19 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
         {/* Progress indicator */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm text-gray-600">Question {currentQuestion + 1} of {questions.length}</span>
-            <span className="text-sm text-gray-600">{Math.round(((currentQuestion + 1) / questions.length) * 100)}%</span>
+            <span className="text-sm text-gray-600">
+              Question {currentQuestion + 1} of {questions.length}
+            </span>
+            <span className="text-sm text-gray-600">
+              {Math.round(((currentQuestion + 1) / questions.length) * 100)}%
+            </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <motion.div
               initial={{ width: 0 }}
-              animate={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
+              animate={{
+                width: `${((currentQuestion + 1) / questions.length) * 100}%`,
+              }}
               transition={{ duration: 0.5 }}
               className="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full"
             />
@@ -264,18 +848,21 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
             className="card p-8"
           >
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-800 mb-3">{currentQ.title}</h2>
+              <h2 className="text-3xl font-bold text-gray-800 mb-3">
+                {currentQ.title}
+              </h2>
               <p className="text-gray-600 text-lg">{currentQ.subtitle}</p>
-              {currentQ.type === 'multiple' && currentQ.maxSelections && (
+              {currentQ.type === "multiple" && currentQ.maxSelections && (
                 <p className="text-blue-600 text-sm mt-2">
                   Select up to {currentQ.maxSelections} options
-                  {answers[currentQ.id] && ` (${answers[currentQ.id].length}/${currentQ.maxSelections} selected)`}
+                  {answers[currentQ.id] &&
+                    ` (${answers[currentQ.id].length}/${currentQ.maxSelections} selected)`}
                 </p>
               )}
             </div>
 
             {/* Cascading dropdowns for location selection */}
-            {currentQ.type === 'cascading' ? (
+            {currentQ.type === "cascading" ? (
               <div className="max-w-2xl mx-auto space-y-6">
                 {/* State dropdown */}
                 <div>
@@ -283,19 +870,30 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
                     Select State
                   </label>
                   <select
-                    value={selectedState || (answers[currentQ.id] ? answers[currentQ.id].split(', ')[1] : '')}
+                    value={
+                      selectedState ||
+                      (answers[currentQ.id]
+                        ? answers[currentQ.id].split(", ")[1]
+                        : "")
+                    }
                     onChange={(e) => handleStateChange(e.target.value)}
                     className="w-full p-4 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-lg bg-white cursor-pointer"
                   >
                     <option value="">Choose a state...</option>
-                    {Object.keys(locationData).sort().map(state => (
-                      <option key={state} value={state}>{state}</option>
-                    ))}
+                    {Object.keys(locationData)
+                      .sort()
+                      .map((state) => (
+                        <option key={state} value={state}>
+                          {state}
+                        </option>
+                      ))}
                   </select>
                 </div>
 
                 {/* City dropdown - only shown when state is selected */}
-                {(selectedState || (answers[currentQ.id] && answers[currentQ.id].split(', ')[1])) && (
+                {(selectedState ||
+                  (answers[currentQ.id] &&
+                    answers[currentQ.id].split(", ")[1])) && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -305,13 +903,17 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
                       Select City
                     </label>
                     <select
-                      value={answers[currentQ.id]?.split(', ')[0] || ''}
+                      value={answers[currentQ.id]?.split(", ")[0] || ""}
                       onChange={(e) => handleCityChange(e.target.value)}
                       className="w-full p-4 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-lg bg-white cursor-pointer"
                     >
                       <option value="">Choose a city...</option>
-                      {locationData[selectedState || answers[currentQ.id]?.split(', ')[1]]?.map(city => (
-                        <option key={city} value={city}>{city}</option>
+                      {locationData[
+                        selectedState || answers[currentQ.id]?.split(", ")[1]
+                      ]?.map((city) => (
+                        <option key={city} value={city}>
+                          {city}
+                        </option>
                       ))}
                     </select>
                   </motion.div>
@@ -332,11 +934,13 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
                   </motion.div>
                 )}
               </div>
-            ) : currentQ.type === 'text' ? (
+            ) : currentQ.type === "text" ? (
               <div className="max-w-2xl mx-auto">
                 <textarea
-                  value={answers[currentQ.id] || ''}
-                  onChange={(e) => handleAnswerChange(currentQ.id, e.target.value)}
+                  value={answers[currentQ.id] || ""}
+                  onChange={(e) =>
+                    handleAnswerChange(currentQ.id, e.target.value)
+                  }
                   placeholder={currentQ.placeholder}
                   className="w-full p-4 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none resize-none h-32 text-lg"
                 />
@@ -345,9 +949,10 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
                 {/* Option cards for single/multiple select questions */}
                 {currentQ.options.map((option, index) => {
-                  const isSelected = currentQ.type === 'multiple' 
-                    ? answers[currentQ.id]?.includes(option.value)
-                    : answers[currentQ.id] === option.value
+                  const isSelected =
+                    currentQ.type === "multiple"
+                      ? answers[currentQ.id]?.includes(option.value)
+                      : answers[currentQ.id] === option.value;
 
                   return (
                     <motion.button
@@ -357,28 +962,36 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
                       transition={{ duration: 0.2, delay: index * 0.1 }}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => handleAnswerChange(currentQ.id, option.value)}
+                      onClick={() =>
+                        handleAnswerChange(currentQ.id, option.value)
+                      }
                       className={`p-6 rounded-lg border-2 transition-all duration-200 text-left ${
                         isSelected
-                          ? 'border-blue-500 bg-blue-50 shadow-lg'
-                          : 'border-gray-200 hover:border-blue-300 hover:shadow-md'
+                          ? "border-blue-500 bg-blue-50 shadow-lg"
+                          : "border-gray-200 hover:border-blue-300 hover:shadow-md"
                       }`}
                     >
                       <div className="flex items-start gap-4">
-                        <div className={`p-2 rounded-lg ${isSelected ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600'}`}>
+                        <div
+                          className={`p-2 rounded-lg ${isSelected ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-600"}`}
+                        >
                           {option.icon}
                         </div>
                         <div className="flex-1">
-                          <h3 className={`font-semibold text-lg mb-1 ${
-                            isSelected ? 'text-blue-700' : 'text-gray-800'
-                          }`}>
+                          <h3
+                            className={`font-semibold text-lg mb-1 ${
+                              isSelected ? "text-blue-700" : "text-gray-800"
+                            }`}
+                          >
                             {option.label}
                           </h3>
-                          <p className="text-gray-600 text-sm">{option.description}</p>
+                          <p className="text-gray-600 text-sm">
+                            {option.description}
+                          </p>
                         </div>
                       </div>
                     </motion.button>
-                  )
+                  );
                 })}
               </div>
             ) : null}
@@ -390,8 +1003,8 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
                 disabled={currentQuestion === 0}
                 className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
                   currentQuestion === 0
-                    ? 'text-gray-400 cursor-not-allowed'
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
                 }`}
               >
                 <ChevronLeft className="w-5 h-5" />
@@ -405,11 +1018,11 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
                 disabled={!canProceed()}
                 className={`flex items-center gap-3 px-8 py-3 rounded-lg font-semibold transition-all duration-200 ${
                   canProceed()
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-xl'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-xl"
+                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
                 }`}
               >
-                {isLastQuestion ? 'Find My Perfect Home' : 'Continue'}
+                {isLastQuestion ? "Find My Perfect Home" : "Continue"}
                 <ChevronRight className="w-5 h-5" />
               </motion.button>
             </div>
@@ -417,7 +1030,7 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
         </AnimatePresence>
       </div>
     </motion.div>
-  )
-}
+  );
+};
 
-export default QuestionnaireFlow
+export default QuestionnaireFlow;
