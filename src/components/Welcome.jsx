@@ -1,9 +1,21 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Home, MapPin, Heart, Star, ChevronRight, Search, Users, Building } from 'lucide-react'
 import houseGif from '../assets/house.gif';
 
-const Welcome = ({ onStart }) => {
+const Welcome = ({ onStart, sessionId }) => {
+  // Log when user views the welcome page
+  useEffect(() => {
+    const timestamp = new Date().toISOString();
+    console.log('[TELEMETRY] [USER_VIEWED_SITE]', {
+      sessionId,
+      timestamp,
+      eventType: 'USER_VIEWED_SITE',
+      page: 'welcome',
+      referrer: document.referrer || 'direct',
+      viewportSize: `${window.innerWidth}x${window.innerHeight}`
+    });
+  }, [sessionId]);
   // Feature cards data - highlights key value propositions
   const features = [
     {
