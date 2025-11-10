@@ -120,7 +120,7 @@ const Welcome = ({ onStart, sessionId }) => {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl max-w-3xl mx-auto"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <motion.div
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 300 }}
@@ -134,6 +134,13 @@ const Welcome = ({ onStart, sessionId }) => {
             >
               <div className="text-3xl font-bold text-green-600 mb-2">1M+ Homes</div>
               <div className="text-gray-600">Properties Analyzed</div>
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <div className="text-3xl font-bold text-purple-600 mb-2">&lt; 5 sec</div>
+              <div className="text-gray-600">Response Time</div>
             </motion.div>
           </div>
         </motion.div>
