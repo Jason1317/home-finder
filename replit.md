@@ -8,6 +8,14 @@ Home Finder is an AI-powered real estate discovery application that helps first-
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+**November 10, 2025 - Complete State Coverage**
+- **Issue Fixed**: Location dropdown was only showing 20 states instead of all 50
+- **Solution**: Expanded `locationData` object in QuestionnaireFlow.jsx to include all 50 US states with 8 major cities each
+- **Impact**: Users can now search for homes across the entire United States (Alabama to Wyoming)
+- **Security Enhancement**: Migrated API keys from hardcoded config.js to Replit Secrets (VITE_GEMINI_API_KEY, VITE_RAPIDAPI_KEY)
+
 ## System Architecture
 
 ### Frontend Architecture
