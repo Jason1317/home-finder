@@ -810,8 +810,55 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen flex items-center justify-center p-4"
+      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
     >
+      {/* Animated Background */}
+      <div className="absolute inset-0 -z-10">
+        {/* Animated Gradient Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50"></div>
+        
+        {/* Floating Orbs */}
+        <motion.div
+          className="absolute top-20 left-20 w-96 h-96 bg-yellow-300 rounded-full mix-blend-multiply filter blur-3xl opacity-10"
+          animate={{
+            x: [0, 100, 0],
+            y: [0, -50, 0],
+            scale: [1, 1.1, 1]
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 15,
+            ease: "easeInOut"
+          }}
+        />
+        <motion.div
+          className="absolute top-40 right-20 w-96 h-96 bg-amber-300 rounded-full mix-blend-multiply filter blur-3xl opacity-10"
+          animate={{
+            x: [0, -100, 0],
+            y: [0, 100, 0],
+            scale: [1, 1.2, 1]
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 12,
+            ease: "easeInOut"
+          }}
+        />
+        <motion.div
+          className="absolute bottom-40 left-1/3 w-96 h-96 bg-orange-300 rounded-full mix-blend-multiply filter blur-3xl opacity-10"
+          animate={{
+            x: [0, 50, 0],
+            y: [0, -100, 0],
+            scale: [1, 1.15, 1]
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 18,
+            ease: "easeInOut"
+          }}
+        />
+      </div>
+
       <div className="max-w-4xl w-full">
         {/* Progress indicator */}
         <div className="mb-8">

@@ -268,8 +268,55 @@ const Results = ({ preferences, recommendations, onRestart }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6 pb-32"
+      className="min-h-screen p-6 pb-32 relative overflow-hidden"
     >
+      {/* Animated Background */}
+      <div className="absolute inset-0 -z-10">
+        {/* Animated Gradient Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50"></div>
+        
+        {/* Floating Orbs */}
+        <motion.div
+          className="absolute top-20 left-20 w-96 h-96 bg-green-300 rounded-full mix-blend-multiply filter blur-3xl opacity-10"
+          animate={{
+            x: [0, 100, 0],
+            y: [0, -50, 0],
+            scale: [1, 1.1, 1]
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 15,
+            ease: "easeInOut"
+          }}
+        />
+        <motion.div
+          className="absolute top-40 right-20 w-96 h-96 bg-emerald-300 rounded-full mix-blend-multiply filter blur-3xl opacity-10"
+          animate={{
+            x: [0, -100, 0],
+            y: [0, 100, 0],
+            scale: [1, 1.2, 1]
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 12,
+            ease: "easeInOut"
+          }}
+        />
+        <motion.div
+          className="absolute bottom-40 left-1/3 w-96 h-96 bg-teal-300 rounded-full mix-blend-multiply filter blur-3xl opacity-10"
+          animate={{
+            x: [0, 50, 0],
+            y: [0, -100, 0],
+            scale: [1, 1.15, 1]
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 18,
+            ease: "easeInOut"
+          }}
+        />
+      </div>
+
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <motion.div
