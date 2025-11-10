@@ -51,12 +51,13 @@ const Welcome = ({ onStart, sessionId }) => {
       </motion.div>
 
       <div className="max-w-6xl mx-auto flex-1 flex items-center justify-center w-full">
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
+        <div className="w-full">
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
           <motion.div
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
@@ -143,6 +144,7 @@ const Welcome = ({ onStart, sessionId }) => {
             </motion.div>
           </div>
         </motion.div>
+        </div>
       </div>
 
       {/* Footer */}
