@@ -15,16 +15,13 @@ const Results = ({ preferences, recommendations, onRestart }) => {
     recommendations.forEach(prop => {
       const uniqueId = getUniqueId(prop)
       if (!uniqueMap.has(uniqueId)) {
-        // Add uniqueId to property for consistent access
         uniqueMap.set(uniqueId, { ...prop, uniqueId })
       }
     })
     
-    // Convert to array and limit to 3
     const unique = Array.from(uniqueMap.values())
     const limited = unique.slice(0, 3)
     
-    // Log truncation for telemetry
     if (unique.length > 3) {
       console.log(`Truncated ${unique.length} results to 3`)
     }

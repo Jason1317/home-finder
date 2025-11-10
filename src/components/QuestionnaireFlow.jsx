@@ -101,7 +101,7 @@ const QuestionnaireFlow = ({ onComplete, isLoading }) => {
         { value: 'nightlife', label: 'Nightlife & Entertainment', icon: <Moon className="w-6 h-6" />, description: 'Bars, clubs, events' },
         { value: 'restaurants', label: 'Dining Scene', icon: <Coffee className="w-6 h-6" />, description: 'Great food options' },
         { value: 'commute', label: 'Easy Commute', icon: <Car className="w-6 h-6" />, description: 'Short travel times' },
-        { value: 'family', label: 'Near Family', icon: <Users className="w-6 h-6" />, description: 'Close to loved ones' }
+        { value: 'family', label: 'Family-Friendly', icon: <Users className="w-6 h-6" />, description: 'Values family life and activities' }
       ]
     },
     {
